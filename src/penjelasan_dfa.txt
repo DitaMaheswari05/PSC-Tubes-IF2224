@@ -1,0 +1,36 @@
+accepting_states
+    - AC_REL dipakai untuk operator relasional satu karakter seperti =, <, >
+    - AC_REL2 dipakai untuk operator relasional dua karakter seperti <=, >=, <>
+    - AC_ARITH dipakai untuk operator aritmetika satu karakter seperti + - * 
+    - AC_PUNCT untuk tanda baca seperti ; , ( ) [ ]
+    - AC_COLON_OR_ASSIGN untuk : dan :=
+    - AC_DOT_OR_RANGE untuk . dan ..
+
+
+transitions
+peta perpindahan antar state tergantung karakter yang dibaca.
+
+    - PUNCT langsung: ; , [ ] → AC_PUNCT.
+
+    - ARITH langsung: + - / → AC_ARITH.
+
+    - REL (sederhana): = → AC_REL.
+
+    - Relasional bercabang:
+        1. `<` → LT1, lalu: `<=` atau `<>` ke AC_REL2, selain itu `<` ke AC_REL.
+        2. `>` → GT1, lalu: `>=` ke AC_REL2, selain itu `>` ke AC_REL.
+
+    - Colon / Assign: : → C1, lalu `:=` (jika `=`) atau : (OTHER) ke AC_COLON_OR_ASSIGN.
+
+    - Dot / Range: . → D1, lalu `..` (jika `.`) atau `.` (OTHER) ke AC_DOT_OR_RANGE.
+
+    - Komentar kurawal: `{` → AC_COMMENT_START, `}` → AC_COMMENT_END.
+
+    - Komentar gaya (* … *):
+
+        1. `(` → P1: jika setelahnya `*` → AC_COMMENT_START (yakni `(*`), jika bukan → AC_PUNCT (yakni`(` ).
+        2. `*` → ST1: jika setelahnya `)` → AC_COMMENT_END (yakni `*)` ), jika bukan → AC_ARITH (yakni `*` biasa).
+
+
+
+untuk keyword, identifier, number, char, string, comment(bagian untuk skip comment) -> dieksekusi di compiler.py

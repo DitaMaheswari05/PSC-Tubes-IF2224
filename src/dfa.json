@@ -1,0 +1,72 @@
+{
+    "start_state": "S",
+    "accepting_states": {
+        "AC_COLON_DOT": { "type": "PUNCT", "value": "lexeme" },
+        "AC_COLON_OR_ASSIGN": { "type": "COLON_OR_ASSIGN", "value": "lexeme" },
+        "AC_DOT_OR_RANGE": { "type": "DOT_OR_RANGE", "value": "lexeme" },
+        "AC_REL": { "type": "REL_OP", "value": "lexeme" },
+        "AC_REL2": { "type": "REL_OP", "value": "lexeme" },
+        "AC_ARITH": { "type": "ARITH_OP", "value": "lexeme" },
+        "AC_PUNCT": { "type": "PUNCT", "value": "lexeme" },
+        "AC_COMMENT_START":   { "type": "COMMENT_START",   "value": "lexeme" },
+        "AC_COMMENT_END":     { "type": "COMMENT_END",     "value": "lexeme" }
+    },
+    "transitions": {
+        "S": {
+            "SEMICOLON": "AC_PUNCT",
+            "COMMA": "AC_PUNCT",
+            "RPAREN": "AC_PUNCT",
+            "LBRACKET": "AC_PUNCT",
+            "RBRACKET": "AC_PUNCT",
+
+            "PLUS": "AC_ARITH",
+            "MINUS": "AC_ARITH",
+            "SLASH": "AC_ARITH",
+
+            "EQ": "AC_REL",
+
+            "LT": "LT1",
+            "GT": "GT1",
+
+            "COLON": "C1",
+            "DOT": "D1",
+
+            "LBRACE": "AC_COMMENT_START",
+            "RBRACE": "AC_COMMENT_END",
+
+            "LPAREN": "P1",
+            "STAR": "ST1"
+
+        },
+
+        "C1": {
+            "EQ": "AC_COLON_OR_ASSIGN",
+            "OTHER": "AC_COLON_OR_ASSIGN"
+        },
+
+        "D1": {
+            "DOT": "AC_DOT_OR_RANGE",
+            "OTHER": "AC_DOT_OR_RANGE"
+        },
+
+        "LT1": {
+            "GT": "AC_REL2",
+            "EQ": "AC_REL2",
+            "OTHER": "AC_REL"
+        },
+
+        "GT1": {
+            "EQ": "AC_REL2",
+            "OTHER": "AC_REL"
+        },
+        "P1": {
+            "STAR":  "AC_COMMENT_START",
+            "OTHER": "AC_PUNCT"
+        },
+
+        "ST1": {
+            "RPAREN": "AC_COMMENT_END",
+            "OTHER":  "AC_ARITH"
+        }
+    }
+}
