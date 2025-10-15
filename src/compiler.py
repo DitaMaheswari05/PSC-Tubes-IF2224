@@ -121,8 +121,8 @@ class Lexer:
         current_state_name = self.spec.start_state
         last_accepted_token: Optional[Token] = None
         buffer = ""
-
         temp_pos = self.pos
+        accepted_length: Optional[int] = None
         
         while temp_pos < len(self.source):
             char = self.source[temp_pos]
@@ -163,6 +163,8 @@ class Lexer:
                     line=self.line,
                     col=self.col
                 )
+                # Simpan panjang asli dari teks yang diterima (sebelum post-processing)
+                accepted_length = len(buffer)
 
         if not last_accepted_token:
             return None
@@ -179,10 +181,16 @@ class Lexer:
             # Sesuaikan nilai token agar sesuai format output yang diharapkan
             last_accepted_token.value = f"'{processed_value}'"
 
-        # Majukan kursor utama sesuai panjang token yang diterima
-        for char_in_token in last_accepted_token.value:
-            # PERBAIKAN: Gunakan `char_in_token` untuk cek baris baru, bukan `self.source[self.pos]`
-            if char_in_token == '\n':
+        # Majukan kursor utama sesuai panjang token yang diterima (gunakan panjang asli dari sumber)
+        if accepted_length is None:
+            # safety: if for some reason length wasn't recorded, fallback to token value length
+            advance_len = len(last_accepted_token.value)
+        else:
+            advance_len = accepted_length
+
+        for _ in range(advance_len):
+            src_ch = self.source[self.pos]
+            if src_ch == '\n':
                 self.line += 1
                 self.col = 1
             else:
