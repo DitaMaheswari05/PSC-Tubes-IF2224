@@ -1,4 +1,4 @@
-program Hello;
+program helloworld;
 
 var
   a, b: integer;

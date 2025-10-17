@@ -4,11 +4,6 @@ from typing import Dict, Set, Optional
 from Repository.TokenType import TokenType
 
 class DFAState:
-    """
-    Class untuk merepresentasikan state dalam DFA
-    Setiap state memiliki nama dan informasi apakah final state
-    """
-    
     def __init__(self, name: str, isFinal: bool = False, tokenType: Optional[TokenType] = None):
         self.name = name
         self.isFinal = isFinal # kalo finalstate, tokenType harus diisi
@@ -28,12 +23,7 @@ class DFA:# DFA
         self.states: Dict[str, DFAState] = {} # dict {nama state : objek state}
         self.startState: Optional[DFAState] = None
         self.finalStates: Set[DFAState] = set()
-        self.keywords = {
-            'program', 'var', 'begin', 'end', 'if', 'then', 'else',
-            'while', 'do', 'for', 'to', 'downto', 'integer', 'real',
-            'boolean', 'char', 'array', 'of', 'procedure', 'function',
-            'const', 'type', 'div', 'mod', 'and', 'or', 'not'
-        }
+        self.keywords = set()
     
     def addState(self, name: str, isFinal: bool = False, tokenType: Optional[TokenType] = None) -> DFAState:
         state = DFAState(name, isFinal, tokenType)
