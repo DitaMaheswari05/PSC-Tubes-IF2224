@@ -13,4 +13,7 @@ def main():
     # Inisialisasi services
     services = Services()
     token = services.processFile(pascalFilePath, dfaFilePath)   
-    return token 
+    if token: 
+        return token 
+    else: 
+        return "debug : ada kesalahan pas proses file" #debug
