@@ -1,7 +1,7 @@
 
 from typing import List, Optional
 from Model.Token import Token
-from Model.DFA import DFA, DFAState
+from Model.DFA import DFA
 from Repository.TokenType import TokenType
 
 class Lexer:
