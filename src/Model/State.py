@@ -9,7 +9,7 @@ class State:
         self.tokenType = tokenType # tipe token
         self.transitions: Dict[str, 'State'] = {} #input char, next state
 
-    def addTransition(self, inputChar: str, nextState: 'State'):
+    def addTransition(self, inputChar: str, nextState: 'State'): # 
         self.transitions[inputChar] = nextState
 
     def getNextState(self, inputChar: str) -> Optional['State']:

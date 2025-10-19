@@ -8,13 +8,11 @@ class TokenType(Enum):
     IDENTIFIER = auto() # nama variabel, nama fungsi, nama prosedur,
     STRING_LITERAL = auto() # string dalam tanda kutip ganda
     CHAR_LITERAL = auto() # karakter dalam tanda kutip tunggal
-    NUMBER_LITERAL = auto() # angka
-    BOOLEAN_LITERAL = auto() # true atau false
-    NULL_LITERAL = auto() # null
-    OPERATOR = auto() # +, -, *, /, =, <, >, <=, >=, ==, !=
-    DELIMITER = auto() # ; , ( ) { } [ ] :
-    COMMENT = auto() # komentar
-    WHITESPACE = auto() # spasi, tab, newline
+    # BOOLEAN_LITERAL = auto() # true atau false
+    # OPERATOR = auto() # +, -, *, /, =, <, >, <=, >=, ==, !=
+    DELIMITER = auto() # ; , ( ) { } [ ] : [[[ mungkin ntar dipakai ]]]
+    # COMMENT = auto() # komentar (dispek gajadi )
+    # WHITESPACE = auto() # spasi, tab, newline [[ buat data doang, gaperlu token ]]
     UNKNOWN = auto() # karakter yang tidak dikenali
     EOF = auto() # end of file
     # Literals
@@ -35,6 +33,6 @@ class TokenType(Enum):
     COLON = auto() # :
     DOT = auto() # .
     # Comments
-    # COMMENT_START = auto() # { di spek gajadi 
-    # COMMENT_END = auto() # }
+    COMMENT_START = auto() # { atau (*
+    COMMENT_END = auto() # } atau *)
 

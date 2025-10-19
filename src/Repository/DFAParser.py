@@ -10,8 +10,8 @@ class DFAParser:
     
     def parseDFAFromJSON(self, filePath: str) -> DFA:
         # keseluruhan fungsi dari class DFAParser: membaca file JSON dan membuat DFA
-        jsonContent = self.jsonParser.parseFile(filePath)
-        dfaData = self.jsonParser.parseJSON(jsonContent)
+        jsonContent = self.jsonParser.parseFile(filePath) # ini baca file JSON
+        dfaData = self.jsonParser.parseJSON(jsonContent) # ini parsing JSONnya
         return self.buildDFA(dfaData)
     
     def buildDFA(self, dfaData: Dict[str, Any]) -> DFA:

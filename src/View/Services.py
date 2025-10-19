@@ -51,7 +51,7 @@ class Services: # kek class panggil func dari berbagai class
             self.showErrorMessage(f"gabisa akses file: {str(e)}")
             return False
     
-    def performLexicalAnalysis(self, sourceCode: str) -> List[Token]:
+    def performLexicalAnalysis(self, sourceCode: str) -> List[Token]:  # 
         # if not self.lexer:
         #     raise Exception("Lexer belum diinisialisasi. Panggil initializeLexer() terlebih dahulu")
         

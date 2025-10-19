@@ -3,7 +3,7 @@ var
   i: integer;
   arr: array[1..5] of integer;
 begin
-  for i := 1 to 5 do
+  while true do
     arr[i] := i * i;
 
   for i := 5 downto 1 do

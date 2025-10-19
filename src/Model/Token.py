@@ -14,6 +14,7 @@ class Token:
     
     def __repr__(self) -> str:
         return self.__str__()
+    
     def getType(self) -> TokenType:
         #getter tokentype
         return self.tokenType

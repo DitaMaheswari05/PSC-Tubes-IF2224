@@ -173,7 +173,7 @@
     "COMMENT_END_PAREN_FINAL": { "is_final": true, "token_type": "COMMENT_END" }
   },
   
-  "reserved_words": {
+  "reserved_words": { 
     "program":"KEYWORD","var":"KEYWORD","const":"KEYWORD","type":"KEYWORD",
     "function":"KEYWORD","procedure":"KEYWORD","begin":"KEYWORD","end":"KEYWORD",
     "if":"KEYWORD","then":"KEYWORD","else":"KEYWORD","while":"KEYWORD",
@@ -181,7 +181,6 @@
     "integer":"KEYWORD","real":"KEYWORD","boolean":"KEYWORD","char":"KEYWORD",
     "array":"KEYWORD","of":"KEYWORD",
     "true":"KEYWORD","false":"KEYWORD",
-
     "div":"ARITHMETIC_OPERATOR","mod":"ARITHMETIC_OPERATOR",
     "and":"LOGICAL_OPERATOR","or":"LOGICAL_OPERATOR","not":"LOGICAL_OPERATOR"
   }

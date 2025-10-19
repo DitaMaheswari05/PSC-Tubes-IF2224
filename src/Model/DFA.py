@@ -12,15 +12,15 @@ class DFA:# DFA
         self.startState: Optional[State] = None
         self.finalStates: Set[State] = set()
         self.keywords = set()
-    
-    def addState(self, name: str, isFinal: bool = False, tokenType: Optional[TokenType] = None) -> State:
+
+    def addState(self, name: str, isFinal: bool = False, tokenType: Optional[TokenType] = None) -> State: # buat state baru
         state = State(name, isFinal, tokenType)
         self.states[name] = state
         if isFinal: # kalo udah final state, masukin ke set final states
             self.finalStates.add(state)
         return state
     
-    def setStartState(self, stateName: str):
+    def setStartState(self, stateName: str): #
         if stateName in self.states: # setter start state. (harus udah ada di states)
             self.startState = self.states[stateName]
     
