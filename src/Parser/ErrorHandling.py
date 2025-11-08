@@ -1,4 +1,5 @@
 from Repository.TokenType import TokenType
+from Model.Token import Token
 
 class ParseError(Exception):
     def __init__(self, message: str, line: int = 0, column: int = 0):
@@ -21,8 +22,19 @@ class UnexpectedTokenError(ParseError):
         else:
             expected_str = str(expected)
         
-        got_str = f"{got.tokenType.name}({got.value})" if got else "EOF"
+        if got is None:
+            got_str = "EOF"
+        elif isinstance(got, Token):
+            got_str = f"{got.tokenType.name}({got.value})"
+        else:
+            got_str = str(got)
+        
         message = f"unexpected token {got_str}, expected {expected_str}"
+        
+        if isinstance(got, Token) and line == 0 and column == 0:
+            line = got.line
+            column = got.column
+        
         super().__init__(message, line, column)
 
 class UnexpectedEOFError(ParseError):
