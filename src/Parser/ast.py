@@ -140,10 +140,11 @@ class ForStatementNode(ASTNode):
     def __init__(self):
         super().__init__("for-statement")
 
-class ProcedureCallNode(ASTNode):
-    # node untuk <procedure-function-call>
-    def __init__(self):
-        super().__init__("procedure-function-call")
+class CallStatementNode(ASTNode):
+    # node gabungan untuk procedure-call dan function-call
+    def __init__(self, is_function=False):
+        call_type = "function-call" if is_function else "procedure-call"
+        super().__init__(call_type)
 
 class ParameterListNode(ASTNode):
     # node untuk <parameter-list>
