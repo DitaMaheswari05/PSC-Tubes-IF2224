@@ -28,7 +28,7 @@ class ASTNode:
                 child_prefix = "│   " * indent + "├── "
                 if is_last:
                     child_prefix = "│   " * indent + "└── "
-                result += f"{child_prefix}{child.getType().name}({child.getLexeme()})\n"
+                result += f"{child_prefix}{child.getType().name}({child.getValue()})\n"
             else:
                 child_prefix = "│   " * indent + "├── "
                 if is_last:
