@@ -115,11 +115,7 @@ class StatementParser:
             # writeln adalah built-in procedure call [cite: 229]
             elif value == 'writeln': 
                 return self.parse_call_statement(is_function=False)
-            else:
-                # Keyword lain (e.g., 'selesai', 'maka') bukan awal statement
-                # Ini adalah empty statement
-                return None
-            
+                
         # Empty statement
         return None
     
