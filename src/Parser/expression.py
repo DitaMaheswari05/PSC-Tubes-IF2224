@@ -115,12 +115,54 @@ class ExpressionParser:
         
         # IDENTIFIER or function-call or KEYWORD (true/false)
         elif token.tokenType == TokenType.IDENTIFIER or token.tokenType == TokenType.KEYWORD:
-            # Peek untuk cek apakah ini function call atau identifier biasa
+            # Peek untuk cek apakah ini function call, array access, record field access, atau identifier biasa
             next_pos = self.parser.position + 1
             if (next_pos < len(self.parser.tokens) and 
                 self.parser.tokens[next_pos].tokenType == TokenType.LPARENTHESIS):
                 # Ini adalah function call
                 node.add_child(self.parser.statement_parser.parse_call_statement(is_function=True))
+            elif (next_pos < len(self.parser.tokens) and 
+                  self.parser.tokens[next_pos].tokenType == TokenType.LBRACKET):
+                # Ini adalah array access (identifier[expression])
+                # Tambahkan identifier
+                node.add_child(token)
+                self.parser.advance()
+                
+                # Consume LBRACKET
+                node.add_child(self.parser.current_token)
+                self.parser.advance()
+                
+                # Parse expression untuk index
+                node.add_child(self.parse_expression())
+                
+                # Expect RBRACKET
+                if not self.parser.current_token or self.parser.current_token.tokenType != TokenType.RBRACKET:
+                    raise UnexpectedTokenError(TokenType.RBRACKET, self.parser.current_token)
+                
+                # Consume RBRACKET
+                node.add_child(self.parser.current_token)
+                self.parser.advance()
+            elif (next_pos < len(self.parser.tokens) and 
+                  self.parser.tokens[next_pos].tokenType == TokenType.DOT):
+                # Ini adalah record field access (identifier.field atau identifier.field.subfield)
+                # Tambahkan identifier pertama
+                node.add_child(token)
+                self.parser.advance()
+                
+                # Loop untuk handle multiple dots (contoh: record.field.subfield)
+                while (self.parser.current_token and 
+                       self.parser.current_token.tokenType == TokenType.DOT):
+                    # Consume DOT
+                    node.add_child(self.parser.current_token)
+                    self.parser.advance()
+                    
+                    # Expect IDENTIFIER untuk field name
+                    if not self.parser.current_token or self.parser.current_token.tokenType != TokenType.IDENTIFIER:
+                        raise UnexpectedTokenError(TokenType.IDENTIFIER, self.parser.current_token)
+                    
+                    # Consume field IDENTIFIER
+                    node.add_child(self.parser.current_token)
+                    self.parser.advance()
             else:
                 # Identifier biasa atau keyword (true/false)
                 node.add_child(token)

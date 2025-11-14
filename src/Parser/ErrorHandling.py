@@ -1,6 +1,8 @@
 from Repository.TokenType import TokenType
 from Model.Token import Token
 
+# kalo ada error pas parsing, raise exception ini
+
 class ParseError(Exception):
     def __init__(self, message: str, line: int = 0, column: int = 0):
         self.message = message

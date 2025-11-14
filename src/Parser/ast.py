@@ -3,16 +3,16 @@
 from typing import List, Any
 from Model.Token import Token
 
-class ASTNode:
+class ASTNode: # base class node di AST
     def __init__(self, node_type: str):
         self.node_type = node_type
         self.children: List[Any] = []
     
-    def add_child(self, child):
+    def add_child(self, child): # tambahin child ke node
         if child is not None:
             self.children.append(child)
     
-    def to_string(self, indent: int = 0) -> str:
+    def to_string(self, indent: int = 0) -> str: #buat visualisasi tree
         prefix = "│   " * indent
         if indent > 0:
             prefix = "│   " * (indent - 1) + "├── "
@@ -40,7 +40,7 @@ class ASTNode:
     def __str__(self):
         return self.to_string() 
     
-class ProgramNode(ASTNode):
+class ProgramNode(ASTNode): # extend ASTNode
     # node untuk <program>
     def __init__(self):
         super().__init__("program")
@@ -185,3 +185,38 @@ class MultiplicativeOperatorNode(ASTNode):
     # node untuk <multiplicative-operator>
     def __init__(self):
         super().__init__("multiplicative-operator")
+
+class RepeatStatementNode(ASTNode):
+    # node untuk <repeat-statement>
+    def __init__(self):
+        super().__init__("repeat-statement")
+
+class CaseStatementNode(ASTNode):
+    # node untuk <case-statement>
+    def __init__(self):
+        super().__init__("case-statement")
+
+class CaseLabelListNode(ASTNode):
+    # node untuk <case-label-list>
+    def __init__(self):
+        super().__init__("case-label-list")
+
+class CaseElementNode(ASTNode):
+    # node untuk <case-element>
+    def __init__(self):
+        super().__init__("case-element")
+
+class RecordTypeNode(ASTNode):
+    # node untuk <record-type>
+    def __init__(self):
+        super().__init__("record-type")
+
+class FieldListNode(ASTNode):
+    # node untuk <field-list>
+    def __init__(self):
+        super().__init__("field-list")
+
+class ParameterGroupNode(ASTNode):
+    # node untuk <parameter-group>
+    def __init__(self):
+        super().__init__("parameter-group")

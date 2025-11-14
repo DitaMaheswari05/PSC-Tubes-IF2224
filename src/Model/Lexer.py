@@ -128,6 +128,36 @@ class Lexer:
             lexeme += self.getCurrentChar()
             self.advance()
         
+        # cek apakah ada compound keyword dengan dash (selain-itu, turun-ke)
+        # peek untuk melihat apakah setelah identifier ada dash
+        if self.getCurrentChar() == '-':
+            # simpan posisi sekarang untuk bisa rollback jika bukan compound keyword
+            savedPosition = self.position
+            savedLine = self.lineNumber
+            savedColumn = self.columnNumber
+            
+            # consume dash
+            tempLexeme = lexeme + '-'
+            self.advance()
+            
+            # scan bagian kedua setelah dash
+            secondPart = ""
+            while (self.getCurrentChar() and 
+                   (self.getCurrentChar().isalnum() or self.getCurrentChar() == '_')):
+                secondPart += self.getCurrentChar()
+                self.advance()
+            
+            # cek apakah lexeme-secondPart adalah keyword di DFA
+            compoundLexeme = tempLexeme + secondPart
+            if self.dfa.isKeyword(compoundLexeme):
+                # ini compound keyword, return sebagai KEYWORD
+                return Token(TokenType.KEYWORD, compoundLexeme, startLine, startColumn)
+            else:
+                # bukan compound keyword, rollback ke posisi sebelum dash
+                self.position = savedPosition
+                self.lineNumber = savedLine
+                self.columnNumber = savedColumn
+        
         # keyword atau identifier
         tokenType = TokenType.KEYWORD if self.dfa.isKeyword(lexeme) else TokenType.IDENTIFIER
         return Token(tokenType, lexeme, startLine, startColumn)

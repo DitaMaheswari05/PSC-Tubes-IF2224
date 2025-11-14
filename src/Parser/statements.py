@@ -3,13 +3,12 @@ from Parser.ast import *
 from Parser.ErrorHandling import *
 
 class StatementParser:
-    """Parser untuk statements"""
+    # statementparser
     
     def __init__(self, parser):
         self.parser = parser
     
     # Helper Methods
-
     def _consume(self, expected_type: TokenType, expected_value: str = None) -> Token:
         #Memeriksa token saat ini, mengonsumsinya (advance), dan mengembalikannya. Akan raise error jika token tidak sesuai.
         token = self.parser.current_token
@@ -35,9 +34,7 @@ class StatementParser:
     
     # Parsing Methods
     def parse_compound_statement(self) -> CompoundStatementNode:
-        """
-        compound-statement → KEYWORD(mulai) statement-list KEYWORD(selesai)
-        """
+       # compound-statement --> KEYWORD(mulai) statement-list KEYWORD(selesai)
         node = CompoundStatementNode()
         
         # 1. KEYWORD(mulai)
@@ -50,9 +47,7 @@ class StatementParser:
         return node
     
     def parse_statement_list(self) -> StatementListNode:
-        """
-        statement-list → statement (SEMICOLON statement)*
-        """
+        # statement-list → statement (SEMICOLON statement)*
         node = StatementListNode()
         
         # 1. statement (pertama, wajib ada)
@@ -74,10 +69,7 @@ class StatementParser:
         return node
     
     def parse_statement(self):
-        """
-        statement → assignment-statement | if-statement | while-statement |
-                   for-statement | compound-statement | call-statement | empty
-        """
+        # statement → assignment-statement | if-statement | while-statement | for-statement | compound-statement | call-statement | empty-statement
         if not self.parser.current_token:
             return None # End of file
 
@@ -88,7 +80,11 @@ class StatementParser:
             next_token = self._peek_token()
             
             # 1a. assignment-statement → IDENTIFIER ASSIGN_OPERATOR ...
-            if next_token and next_token.getType() == TokenType.ASSIGN_OPERATOR:
+            # atau record/array assignment → IDENTIFIER DOT/LBRACKET ...
+            if (next_token and 
+                (next_token.getType() == TokenType.ASSIGN_OPERATOR or
+                 next_token.getType() == TokenType.DOT or
+                 next_token.getType() == TokenType.LBRACKET)):
                 return self.parse_assignment_statement()
             
             # 1b. call-statement → IDENTIFIER LPARENTHESIS ...
@@ -98,7 +94,7 @@ class StatementParser:
                 return self.parse_call_statement(is_function=False)
             
             else:
-                raise SyntaxError(f"Unexpected token after IDENTIFIER '{token.getValue()}'. Expected ':=' or '(', got {next_token.getValue() if next_token else 'None'}")
+                raise SyntaxError(f"Unexpected token after IDENTIFIER '{token.getValue()}'. Expected ':=', '.', '[', or '(', got {next_token.getValue() if next_token else 'None'}")
         
         # 2. Dispatcher berdasarkan KEYWORD
         elif token.getType() == TokenType.KEYWORD:
@@ -112,6 +108,10 @@ class StatementParser:
                 return self.parse_while_statement()
             elif value == 'untuk':
                 return self.parse_for_statement()
+            elif value == 'ulangi':
+                return self.parse_repeat_statement()
+            elif value == 'kasus':
+                return self.parse_case_statement()
             # writeln adalah built-in procedure call [cite: 229]
             elif value == 'writeln': 
                 return self.parse_call_statement(is_function=False)
@@ -120,13 +120,52 @@ class StatementParser:
         return None
     
     def parse_assignment_statement(self) -> AssignmentStatementNode:
-        """
-        assignment-statement → IDENTIFIER ASSIGN_OPERATOR(:=) expression
-        """
+        # assignment-statement → IDENTIFIER ASSIGN_OPERATOR(:=) expression
+        # atau record-field-assignment → IDENTIFIER (DOT IDENTIFIER)+ ASSIGN_OPERATOR(:=) expression
+        # atau array-assignment → IDENTIFIER LBRACKET expression RBRACKET ASSIGN_OPERATOR(:=) expression
         node = AssignmentStatementNode()
         
-        # 1. IDENTIFIER
+        # 1. IDENTIFIER pertama
         node.add_child(self._consume(TokenType.IDENTIFIER))
+        
+        # cek apakah ada DOT untuk record field access atau LBRACKET untuk array access
+        while (self.parser.current_token and 
+               (self.parser.current_token.tokenType == TokenType.DOT or
+                self.parser.current_token.tokenType == TokenType.LBRACKET)):
+            if self.parser.current_token.tokenType == TokenType.DOT:
+                # record field access (identifier.field)
+                # consume DOT
+                node.add_child(self.parser.current_token)
+                self.parser.advance()
+                
+                # expect IDENTIFIER untuk field name
+                if not self.parser.current_token or self.parser.current_token.tokenType != TokenType.IDENTIFIER:
+                    raise UnexpectedTokenError(TokenType.IDENTIFIER, self.parser.current_token)
+                
+                # consume field IDENTIFIER
+                node.add_child(self.parser.current_token)
+                self.parser.advance()
+            elif self.parser.current_token.tokenType == TokenType.LBRACKET:
+                # array access (identifier[expression])
+                # consume LBRACKET
+                node.add_child(self.parser.current_token)
+                self.parser.advance()
+                
+                # parse expression untuk index
+                node.add_child(self.parser.expression_parser.parse_expression())
+                
+                # expect RBRACKET
+                if not self.parser.current_token or self.parser.current_token.tokenType != TokenType.RBRACKET:
+                    raise UnexpectedTokenError(TokenType.RBRACKET, self.parser.current_token)
+                
+                # consume RBRACKET
+                node.add_child(self.parser.current_token)
+                self.parser.advance()
+                
+                # setelah array access, bisa ada field access lagi (untuk array of records)
+                # atau langsung assignment
+                break
+        
         # 2. ASSIGN_OPERATOR (:=)
         node.add_child(self._consume(TokenType.ASSIGN_OPERATOR))
         # 3. expression (Panggil parser rekan Anda)
@@ -135,10 +174,7 @@ class StatementParser:
         return node
     
     def parse_if_statement(self) -> IfStatementNode:
-        """
-        if-statement → KEYWORD(jika) expression KEYWORD(maka) statement 
-                      (KEYWORD(selain-itu) statement)?
-        """
+        # if-statement → KEYWORD(jika) expression KEYWORD(maka) statement
         node = IfStatementNode()
         
         # 1. KEYWORD(jika)
@@ -157,9 +193,7 @@ class StatementParser:
         return node
     
     def parse_while_statement(self) -> WhileStatementNode:
-        """
-        while-statement → KEYWORD(selama) expression KEYWORD(lakukan) statement
-        """
+        # while-statement → KEYWORD(selama) expression KEYWORD(lakukan) statement
         node = WhileStatementNode()
         
         # 1. KEYWORD(selama)
@@ -174,11 +208,7 @@ class StatementParser:
         return node
     
     def parse_for_statement(self) -> ForStatementNode:
-        """
-        for-statement → KEYWORD(untuk) IDENTIFIER ASSIGN_OPERATOR expression 
-                       (KEYWORD(ke)/KEYWORD(turun-ke)) expression 
-                       KEYWORD(lakukan) statement
-        """
+        # for-statement → KEYWORD(untuk) IDENTIFIER ASSIGN_OPERATOR expression (KEYWORD(ke)/KEYWORD(turun-ke)) expression KEYWORD(lakukan) statement
         node = ForStatementNode()
         
         # 1. KEYWORD(untuk)
@@ -206,12 +236,7 @@ class StatementParser:
         return node
     
     def parse_call_statement(self, is_function=False) -> CallStatementNode:
-        """
-        call-statement → IDENTIFIER (LPARENTHESIS parameter-list RPARENTHESIS)?
-        
-        Args:
-            is_function: True jika dipanggil sebagai function call, False untuk procedure call
-        """
+        # call-statement → (procedure-call | function-call) 
         node = CallStatementNode(is_function=is_function)
         
         # 1. IDENTIFIER (atau KEYWORD untuk built-in seperti 'writeln')
@@ -238,10 +263,7 @@ class StatementParser:
     
     # Helper method untuk parse parameter list
     def parse_parameter_list(self) -> ParameterListNode:
-        """
-        Mengurai parameter aktual (untuk pemanggilan fungsi/prosedur)
-        parameter-list → expression (COMMA expression)*
-        """
+        # parameter-list → expression (COMMA expression)*
         node = ParameterListNode()
         
         # 1. expression (pertama, wajib ada)
@@ -252,4 +274,89 @@ class StatementParser:
             node.add_child(self._consume(TokenType.COMMA))
             node.add_child(self.parser.expression_parser.parse_expression())
             
+        return node
+    
+    def parse_repeat_statement(self) -> RepeatStatementNode:
+        # repeat-statement → KEYWORD(ulangi) statement-list KEYWORD(sampai) expression
+        node = RepeatStatementNode()
+        
+        # 1. KEYWORD(ulangi)
+        node.add_child(self._consume(TokenType.KEYWORD, 'ulangi'))
+        # 2. statement-list
+        node.add_child(self.parse_statement_list())
+        # 3. KEYWORD(sampai)
+        node.add_child(self._consume(TokenType.KEYWORD, 'sampai'))
+        # 4. expression (kondisi berhenti)
+        node.add_child(self.parser.expression_parser.parse_expression())
+        
+        return node
+    
+    def parse_case_statement(self) -> CaseStatementNode:
+        # case-statement → KEYWORD(kasus) expression KEYWORD(dari) case-element (SEMICOLON case-element)* KEYWORD(selesai)
+        node = CaseStatementNode()
+        
+        # 1. KEYWORD(kasus)
+        node.add_child(self._consume(TokenType.KEYWORD, 'kasus'))
+        # 2. expression (selector)
+        node.add_child(self.parser.expression_parser.parse_expression())
+        # 3. KEYWORD(dari)
+        node.add_child(self._consume(TokenType.KEYWORD, 'dari'))
+        # 4. case-element pertama
+        node.add_child(self.parse_case_element())
+        # 5. (SEMICOLON case-element)*
+        while self.parser.current_token and self.parser.current_token.getType() == TokenType.SEMICOLON:
+            # Cek untuk trailing semicolon sebelum 'selesai'
+            if self.parser.current_token and \
+               self.parser.position + 1 < len(self.parser.tokens) and \
+               self.parser.tokens[self.parser.position + 1].getValue() == 'selesai':
+                node.add_child(self._consume(TokenType.SEMICOLON))
+                break
+            
+            node.add_child(self._consume(TokenType.SEMICOLON))
+            node.add_child(self.parse_case_element())
+        # 6. KEYWORD(selesai)
+        node.add_child(self._consume(TokenType.KEYWORD, 'selesai'))
+        
+        return node
+    
+    def parse_case_element(self) -> CaseElementNode:
+        # case-element → case-label-list COLON statement
+        node = CaseElementNode()
+        
+        # 1. case-label-list
+        node.add_child(self.parse_case_label_list())
+        # 2. COLON
+        node.add_child(self._consume(TokenType.COLON))
+        # 3. statement
+        node.add_child(self.parse_statement())
+        
+        return node
+    
+    def parse_case_label_list(self) -> CaseLabelListNode:
+        # case-label-list → constant (COMMA constant)*
+        node = CaseLabelListNode()
+        
+        # 1. constant pertama (bisa NUMBER, CHAR_LITERAL, atau IDENTIFIER)
+        if not self.parser.current_token:
+            raise SyntaxError("Unexpected end of file in case label")
+        
+        if self.parser.current_token.getType() in [TokenType.NUMBER, TokenType.CHAR_LITERAL, TokenType.IDENTIFIER]:
+            node.add_child(self.parser.current_token)
+            self.parser.advance()
+        else:
+            raise SyntaxError(f"Expected constant in case label, got {self.parser.current_token.getType()}")
+        
+        # 2. (COMMA constant)*
+        while self.parser.current_token and self.parser.current_token.getType() == TokenType.COMMA:
+            node.add_child(self._consume(TokenType.COMMA))
+            
+            if not self.parser.current_token:
+                raise SyntaxError("Unexpected end of file after comma in case label")
+            
+            if self.parser.current_token.getType() in [TokenType.NUMBER, TokenType.CHAR_LITERAL, TokenType.IDENTIFIER]:
+                node.add_child(self.parser.current_token)
+                self.parser.advance()
+            else:
+                raise SyntaxError(f"Expected constant in case label, got {self.parser.current_token.getType()}")
+        
         return node

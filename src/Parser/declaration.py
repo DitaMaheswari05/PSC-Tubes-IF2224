@@ -6,8 +6,7 @@ from Parser.ErrorHandling import *
 # fungsi advance() merupakan placeholder, karena belum ada implementasi parser
 
 class DeclarationParser:
-    """parser untuk bagian deklarasi (const, type, var, subprogram)"""
-    
+    # DeclarationParser untuk bagian deklarasi (const, type, var, subprogram)    
     def __init__(self, parser):
         self.parser = parser
     
@@ -238,15 +237,29 @@ class DeclarationParser:
            self.parser.current_token.value.lower() == "larik":
             array_node = self.parse_array_type()
             node.add_child(array_node)
+        # cek type record (rekaman)
+        elif self.parser.current_token.tokenType == TokenType.KEYWORD and \
+             self.parser.current_token.value.lower() == "rekaman":
+            record_node = self.parse_record_type()
+            node.add_child(record_node)
         # cek tipe dasar (integer, real, boolean, char, string)
         elif self.parser.current_token.tokenType == TokenType.KEYWORD and \
              self.parser.current_token.value.lower() in ["integer", "real", "boolean", "char", "string", "bulat", "desimal", "karakter", "logika"]:
             node.add_child(self.parser.current_token)
             self.parser.advance()
-        # cek tipe kustom (IDENTIFIER)
-        elif self.parser.current_token.tokenType == TokenType.IDENTIFIER:
-            node.add_child(self.parser.current_token)
-            self.parser.advance()
+        # cek subrange type (NUMBER..NUMBER atau IDENTIFIER..IDENTIFIER)
+        elif self.parser.current_token.tokenType in [TokenType.NUMBER, TokenType.IDENTIFIER]:
+            # Peek untuk cek apakah ini subrange (ada ..)
+            next_pos = self.parser.position + 1
+            if next_pos < len(self.parser.tokens) and \
+               self.parser.tokens[next_pos].tokenType == TokenType.RANGE_OPERATOR:
+                # Ini adalah subrange type
+                range_node = self.parse_range()
+                node.add_child(range_node)
+            else:
+                # Ini adalah tipe kustom (IDENTIFIER)
+                node.add_child(self.parser.current_token)
+                self.parser.advance()
         else:
             raise UnexpectedTokenError("type", self.parser.current_token)
         
@@ -350,12 +363,12 @@ class DeclarationParser:
         node.add_child(self.parser.current_token)
         self.parser.advance()
         
-        # optional formal parameter list
+        # optional formal parameter list (cek jika ada LPARENTHESIS)
         if self.parser.current_token and self.parser.current_token.tokenType == TokenType.LPARENTHESIS:
             param_list = self.parse_formal_parameter_list()
             node.add_child(param_list)
         
-        # expect SEMICOLON
+        # expect SEMICOLON (setelah identifier atau setelah parameter list)
         if not self.parser.current_token or self.parser.current_token.tokenType != TokenType.SEMICOLON:
             raise UnexpectedTokenError(TokenType.SEMICOLON, self.parser.current_token)
         
@@ -367,8 +380,9 @@ class DeclarationParser:
         decl_part = self.parse_declaration_part()
         node.add_child(decl_part)
         
-        # parse compound statement 
-        # to do, nunggu bagian lain
+        # parse compound statement (mulai...selesai)
+        compound_stmt = self.parser.statement_parser.parse_compound_statement()
+        node.add_child(compound_stmt)
         
         # expect SEMICOLON
         if self.parser.current_token and self.parser.current_token.tokenType == TokenType.SEMICOLON:
@@ -427,8 +441,9 @@ class DeclarationParser:
         decl_part = self.parse_declaration_part()
         node.add_child(decl_part)
         
-        # parse compound statement
-        # to do, nunggu bagian lain
+        # parse compound statement (mulai...selesai)
+        compound_stmt = self.parser.statement_parser.parse_compound_statement()
+        node.add_child(compound_stmt)
         
         # expect SEMICOLON at the end
         if self.parser.current_token and self.parser.current_token.tokenType == TokenType.SEMICOLON:
@@ -447,6 +462,21 @@ class DeclarationParser:
         # tambah node LPARENTHESIS, dan maju ke token berikutnya
         node.add_child(self.parser.current_token)
         self.parser.advance()
+        
+        # cek jika parameter list kosong (langsung RPARENTHESIS)
+        if self.parser.current_token and self.parser.current_token.tokenType == TokenType.RPARENTHESIS:
+            # tambah node RPARENTHESIS, dan maju ke token berikutnya
+            node.add_child(self.parser.current_token)
+            self.parser.advance()
+            return node
+        
+        # cek apakah ada keyword 'variabel' untuk VAR parameter (pass-by-reference)
+        if (self.parser.current_token and 
+            self.parser.current_token.tokenType == TokenType.KEYWORD and 
+            self.parser.current_token.value.lower() == "variabel"):
+            # tambah node KEYWORD(variabel), dan maju ke token berikutnya
+            node.add_child(self.parser.current_token)
+            self.parser.advance()
         
         # parse first parameter group
         node.add_child(self.parse_identifier_list())
@@ -472,6 +502,14 @@ class DeclarationParser:
             if self.parser.current_token and self.parser.current_token.tokenType == TokenType.RPARENTHESIS:
                 break
             
+            # cek apakah ada keyword 'variabel' untuk VAR parameter (pass-by-reference)
+            if (self.parser.current_token and 
+                self.parser.current_token.tokenType == TokenType.KEYWORD and 
+                self.parser.current_token.value.lower() == "variabel"):
+                # tambah node KEYWORD(variabel), dan maju ke token berikutnya
+                node.add_child(self.parser.current_token)
+                self.parser.advance()
+            
             # parse identifier-list
             identifier_list = self.parse_identifier_list()
             node.add_child(identifier_list)
@@ -495,5 +533,87 @@ class DeclarationParser:
         # tambah node RPARENTHESIS, dan maju ke token berikutnya
         node.add_child(self.parser.current_token)
         self.parser.advance()
+        
+        return node
+    
+    def parse_record_type(self) -> RecordTypeNode:
+        # parse record type (rekaman) 
+        node = RecordTypeNode()
+        
+        # expect 'rekaman' keyword
+        if not (self.parser.current_token and 
+                self.parser.current_token.tokenType == TokenType.KEYWORD and
+                self.parser.current_token.value.lower() == "rekaman"):
+            raise UnexpectedTokenError("rekaman", self.parser.current_token)
+        
+        # tambah node 'rekaman', dan maju ke token berikutnya
+        node.add_child(self.parser.current_token)
+        self.parser.advance()
+        
+        # parse field-list
+        field_list = self.parse_field_list()
+        node.add_child(field_list)
+        
+        # expect 'selesai' keyword
+        if not (self.parser.current_token and 
+                self.parser.current_token.tokenType == TokenType.KEYWORD and
+                self.parser.current_token.value.lower() == "selesai"):
+            raise UnexpectedTokenError("selesai", self.parser.current_token)
+        
+        # tambah node 'selesai', dan maju ke token berikutnya
+        node.add_child(self.parser.current_token)
+        self.parser.advance()
+        
+        return node
+    
+    def parse_field_list(self) -> FieldListNode:
+        # parse field list dalam record type
+        node = FieldListNode()
+        
+        # parse identifier-list pertama
+        node.add_child(self.parse_identifier_list())
+        
+        # expect COLON
+        if not self.parser.current_token or self.parser.current_token.tokenType != TokenType.COLON:
+            raise UnexpectedTokenError(TokenType.COLON, self.parser.current_token)
+        
+        # tambah node COLON, dan maju ke token berikutnya
+        node.add_child(self.parser.current_token)
+        self.parser.advance()
+        
+        # parse type
+        type_node = self.parse_type()
+        node.add_child(type_node)
+        
+        # parse field lainnya yang dipisahkan semicolon
+        while self.parser.current_token and self.parser.current_token.tokenType == TokenType.SEMICOLON:
+            # cek apakah ini trailing semicolon sebelum 'selesai'
+            next_pos = self.parser.position + 1
+            if next_pos < len(self.parser.tokens) and \
+               self.parser.tokens[next_pos].tokenType == TokenType.KEYWORD and \
+               self.parser.tokens[next_pos].value.lower() == "selesai":
+                # ini trailing semicolon, tambahkan dan break
+                node.add_child(self.parser.current_token)
+                self.parser.advance()
+                break
+            
+            # tambah node SEMICOLON, dan maju ke token berikutnya
+            node.add_child(self.parser.current_token)
+            self.parser.advance()
+            
+            # parse identifier-list
+            node.add_child(self.parse_identifier_list())
+            
+            # expect COLON
+            if not self.parser.current_token or self.parser.current_token.tokenType != TokenType.COLON:
+                raise UnexpectedTokenError(TokenType.COLON, self.parser.current_token)
+            
+            # tambah node COLON, dan maju ke token berikutnya
+            node.add_child(self.parser.current_token)
+            self.parser.advance()
+            
+            # parse type
+            type_node = self.parse_type()
+            node.add_child(type_node)
         
         return node
