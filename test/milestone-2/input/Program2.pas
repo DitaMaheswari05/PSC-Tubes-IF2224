@@ -1,14 +1,13 @@
-program TestDeclarations;
-konstanta
-    MAX = 100;
-    MIN = 1;
-tipe
-    Range = 1..10;
+program TestProcedure;
 variabel
-    x, y, z: integer;
-    nilai: Range;
+    x: integer;
+
+prosedur printNumber(n: integer);
 mulai
-    x := MAX;
-    y := MIN;
-    z := x + y;
+    writeln('Number is: ', n);
+selesai;
+
+mulai
+    x := 42;
+    printNumber(x);
 selesai.
