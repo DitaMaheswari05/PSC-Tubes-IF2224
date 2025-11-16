@@ -5,6 +5,7 @@ from Model.Token import Token
 from Repository.Parser import Parser as DFAParser
 from Parser.parser import SyntaxParser
 from Parser.ast import ProgramNode
+import os
 
 class Services: # kek class panggil func dari berbagai class
     def __init__(self):
@@ -96,7 +97,31 @@ class Services: # kek class panggil func dari berbagai class
         else:
             print("Parse tree kosong!")
     
-    def processFile(self, pascalFilePath: str, dfaFilePath: str, showTokens: bool = False, showParseTree: bool = True) -> Optional[ProgramNode]:
+    def saveParseTreeToFile(self, parseTree: ProgramNode, inputFilePath: str):
+        try:
+            outputDir = "../test/milestone-2/output"
+            os.makedirs(outputDir, exist_ok=True)
+            
+            # Dapatkan nama file dari path input
+            inputFileName = os.path.basename(inputFilePath)
+            # Ganti ekstensi .pas dengan .txt
+            outputFileName = os.path.splitext(inputFileName)[0] + ".txt"
+            outputFilePath = os.path.join(outputDir, outputFileName)
+            
+            # Tulis parse tree ke file
+            with open(outputFilePath, 'w', encoding='utf-8') as f:
+                if parseTree:
+                    f.write("=== Parse Tree ===\n")
+                    f.write(parseTree.to_string())
+                else:
+                    f.write("Parse tree kosong!\n")
+            
+            print(f"\nParse tree berhasil disimpan ke: {outputFilePath}")
+        
+        except Exception as e:
+            self.showErrorMessage(f"Gagal menyimpan parse tree: {str(e)}")
+    
+    def processFile(self, pascalFilePath: str, dfaFilePath: str, showTokens: bool = False, showParseTree: bool = True, saveOutput: bool = True) -> Optional[ProgramNode]:
         # MAIN METHOD KESELURUHAN, yang bakal dipanggil di entry point main.py
         try:
             if not self.validatePascalFilePath(pascalFilePath):
@@ -115,6 +140,11 @@ class Services: # kek class panggil func dari berbagai class
             # kalo showParseTree True (defaultnya secara spek sih true)
             if showParseTree and parseTree:
                 self.displayParseTree(parseTree)
+            
+            # Simpan output
+            if saveOutput and parseTree:
+                self.saveParseTreeToFile(parseTree, pascalFilePath)
+            
             return parseTree
             
         except Exception as e:

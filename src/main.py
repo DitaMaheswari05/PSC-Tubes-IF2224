@@ -19,7 +19,7 @@ def main():
     # showTokens=False untuk tidak menampilkan token (fokus ke parse tree)
     # showParseTree=True untuk menampilkan parse tree
     # kalo true semua, semuanya ditampilin
-    parseTree = services.processFile(pascalFilePath, dfaFilePath, showTokens=False, showParseTree=True) # fokus ke parse tree 
+    parseTree = services.processFile(pascalFilePath, dfaFilePath, showTokens=False, showParseTree=True, saveOutput=True) # fokus ke parse tree 
     if parseTree: 
         return parseTree
     else: 
