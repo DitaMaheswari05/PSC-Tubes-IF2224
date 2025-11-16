@@ -6,20 +6,43 @@ def main():
     # HARDCODED!
     defaultDFAPath = "Repository/dfa.json"
     if len(sys.argv) < 2:
-        print("Usage: python main.py <pascal_file.pas> [dfa_file.json]")
-        print("Example: python main.py ../test/milestone-2/input/Program1.pas")
+        print("Usage:")
+        print("  Mode 1 (Pascal file): python run.py <pascal_file.pas> [dfa_file.json]")
+        print("  Mode 2 (Token file):  python run.py <token_file.txt>")
+        print("\nExamples:")
+        print("  python run.py ../test/milestone-2/input/Program1.pas")
+        print("  python run.py ../test/milestone-1/output/Program1.txt")
         return None
     
-    pascalFilePath = sys.argv[1]
-    dfaFilePath = sys.argv[2] if len(sys.argv) > 2 else defaultDFAPath
+    inputFilePath = sys.argv[1]
     
-    # Inisialisasi services --> antarmuka user
     services = Services()
-    # Proses file Pascal: lexical analysis + syntax analysis
-    # showTokens=False untuk tidak menampilkan token (fokus ke parse tree)
-    # showParseTree=True untuk menampilkan parse tree
-    # kalo true semua, semuanya ditampilin
-    parseTree = services.processFile(pascalFilePath, dfaFilePath, showTokens=False, showParseTree=True, saveOutput=True) # fokus ke parse tree 
+    
+    # Deteksi mode berdasarkan ekstensi file
+    if inputFilePath.lower().endswith('.txt'):
+        # Mode 2: Input dari token file (milestone 1)
+        print(f"Mode: Reading tokens from file: {inputFilePath}")
+        parseTree = services.processFileWithTokenInput(
+            inputFilePath, 
+            showParseTree=True, 
+            saveOutput=True
+        )
+    elif inputFilePath.lower().endswith('.pas'):
+        # Mode 1: Input dari Pascal file (proses lengkap: lexer + parser)
+        print(f"Mode: Processing Pascal file: {inputFilePath}")
+        dfaFilePath = sys.argv[2] if len(sys.argv) > 2 else defaultDFAPath
+        parseTree = services.processFile(
+            inputFilePath, 
+            dfaFilePath, 
+            showTokens=False, 
+            showParseTree=True, 
+            saveOutput=True
+        )
+    else:
+        print("Error: File harus berekstensi .pas atau .txt")
+        return None
+    
+    
     if parseTree: 
         return parseTree
     else: 

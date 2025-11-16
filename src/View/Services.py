@@ -5,6 +5,7 @@ from Model.Token import Token
 from Repository.Parser import Parser as DFAParser
 from Parser.parser import SyntaxParser
 from Parser.ast import ProgramNode
+from Repository.TokenType import TokenType
 import os
 
 class Services: # kek class panggil func dari berbagai class
@@ -150,7 +151,88 @@ class Services: # kek class panggil func dari berbagai class
         except Exception as e:
             self.showErrorMessage(f"err: {str(e)}")
             return None
-    
     def showErrorMessage(self, message: str = "err"):
         # Menampilkan pesan error
         print(f"ERROR: {message}")
+    
+    def loadTokensFromFile(self, tokenFilePath: str) -> List[Token]:
+        # Membaca hasil tokenisasi dari output milestone-1 (.txt)
+        try:
+            with open(tokenFilePath, 'r', encoding='utf-8') as file:
+                lines = file.readlines()
+            
+            tokens = []
+            for line in lines:
+                line = line.strip()
+                if not line or line.startswith('==='):  # Skip empty lines dan headers
+                    continue
+                
+                # Parse format: TYPE(value) atau TYPE
+                token = self.parseTokenFromString(line)
+                if token:
+                    tokens.append(token)
+            
+            return tokens
+        
+        except FileNotFoundError:
+            self.showErrorMessage(f"File token {tokenFilePath} tidak ditemukan")
+            raise
+        except Exception as e:
+            self.showErrorMessage(f"Gagal membaca file token {tokenFilePath}: {str(e)}")
+            raise
+
+    def parseTokenFromString(self, tokenString: str) -> Optional[Token]:
+        # Parse string token format 'TYPE(value)' atau 'TYPE' menjadi objek Token
+        try:
+            # Contoh format: KEYWORD(program), IDENTIFIER, dll
+            if '(' in tokenString and ')' in tokenString:
+                # Format: TYPE(value)
+                type_part = tokenString[:tokenString.index('(')]
+                value_part = tokenString[tokenString.index('(')+1:tokenString.rindex(')')]
+            else:
+                # Format: TYPE (tanpa value)
+                type_part = tokenString
+                value_part = None
+            
+            # Convert string ke TokenType enum
+            try:
+                token_type = TokenType[type_part]
+            except KeyError:
+                self.showErrorMessage(f"Unknown token type: {type_part}")
+                return None
+            
+            # Asumsi: Token(tokenType, value, line, column)
+            return Token(token_type, value_part, 0, 0)
+        
+        except Exception as e:
+            self.showErrorMessage(f"Gagal parsing token string '{tokenString}': {str(e)}")
+            return None
+
+    def processFileWithTokenInput(self, tokenFilePath: str, showParseTree: bool = True, saveOutput: bool = True) -> Optional[ProgramNode]:
+        # Proses file menggunakan token file (.txt) dari milestone 1
+        try:
+            # Load tokens dari file
+            tokens = self.loadTokensFromFile(tokenFilePath)
+            
+            if not tokens:
+                self.showErrorMessage("Tidak ada token yang berhasil di-load")
+                return None
+            
+            print(f"\n{len(tokens)} tokens berhasil di-load dari {tokenFilePath}")
+            
+            # Syntax analysis
+            parseTree = self.performSyntaxAnalysis(tokens)
+            
+            # Display parse tree
+            if showParseTree and parseTree:
+                self.displayParseTree(parseTree)
+            
+            # Save output
+            if saveOutput and parseTree:
+                self.saveParseTreeToFile(parseTree, tokenFilePath)
+            
+            return parseTree
+            
+        except Exception as e:
+            self.showErrorMessage(f"Error processing token file: {str(e)}")
+            return None
