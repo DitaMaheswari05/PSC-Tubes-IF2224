@@ -1,0 +1,75 @@
+=== Parse Tree ===
+<program>
+├── <program-header>
+│   ├── KEYWORD(program)
+│   ├── IDENTIFIER(TestProcedure)
+│   └── SEMICOLON(;)
+├── <declaration-part>
+│   ├── <var-declaration>
+│   │   ├── KEYWORD(variabel)
+│   │   ├── <identifier-list>
+│   │   │   └── IDENTIFIER(x)
+│   │   ├── COLON(:)
+│   │   ├── <type>
+│   │   │   └── KEYWORD(integer)
+│   │   └── SEMICOLON(;)
+│   ├── <procedure-declaration>
+│   │   ├── KEYWORD(prosedur)
+│   │   ├── IDENTIFIER(printNumber)
+│   │   ├── <formal-parameter-list>
+│   │   │   ├── LPARENTHESIS(()
+│   │   │   ├── <identifier-list>
+│   │   │   │   └── IDENTIFIER(n)
+│   │   │   ├── COLON(:)
+│   │   │   ├── <type>
+│   │   │   │   └── KEYWORD(integer)
+│   │   │   └── RPARENTHESIS())
+│   │   ├── SEMICOLON(;)
+│   │   ├── <declaration-part>
+│   │   ├── <compound-statement>
+│   │   │   ├── KEYWORD(mulai)
+│   │   │   ├── <statement-list>
+│   │   │   │   ├── <procedure-call>
+│   │   │   │   │   ├── IDENTIFIER(writeln)
+│   │   │   │   │   ├── LPARENTHESIS(()
+│   │   │   │   │   ├── <parameter-list>
+│   │   │   │   │   │   ├── <expression>
+│   │   │   │   │   │   │   ├── <simple-expression>
+│   │   │   │   │   │   │   │   ├── <term>
+│   │   │   │   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   │   │   │   └── STRING_LITERAL('Number is: ')
+│   │   │   │   │   │   ├── COMMA(,)
+│   │   │   │   │   │   ├── <expression>
+│   │   │   │   │   │   │   ├── <simple-expression>
+│   │   │   │   │   │   │   │   ├── <term>
+│   │   │   │   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   │   │   │   └── IDENTIFIER(n)
+│   │   │   │   │   └── RPARENTHESIS())
+│   │   │   │   └── SEMICOLON(;)
+│   │   │   └── KEYWORD(selesai)
+│   │   └── SEMICOLON(;)
+├── <compound-statement>
+│   ├── KEYWORD(mulai)
+│   ├── <statement-list>
+│   │   ├── <assignment-statement>
+│   │   │   ├── IDENTIFIER(x)
+│   │   │   ├── ASSIGN_OPERATOR(:=)
+│   │   │   ├── <expression>
+│   │   │   │   ├── <simple-expression>
+│   │   │   │   │   ├── <term>
+│   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   └── NUMBER(42)
+│   │   ├── SEMICOLON(;)
+│   │   ├── <procedure-call>
+│   │   │   ├── IDENTIFIER(printNumber)
+│   │   │   ├── LPARENTHESIS(()
+│   │   │   ├── <parameter-list>
+│   │   │   │   ├── <expression>
+│   │   │   │   │   ├── <simple-expression>
+│   │   │   │   │   │   ├── <term>
+│   │   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   │   └── IDENTIFIER(x)
+│   │   │   └── RPARENTHESIS())
+│   │   └── SEMICOLON(;)
+│   └── KEYWORD(selesai)
+└── DOT(.)

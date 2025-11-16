@@ -1,0 +1,79 @@
+=== Parse Tree ===
+<program>
+├── <program-header>
+│   ├── KEYWORD(program)
+│   ├── IDENTIFIER(TestIf)
+│   └── SEMICOLON(;)
+├── <declaration-part>
+│   ├── <var-declaration>
+│   │   ├── KEYWORD(variabel)
+│   │   ├── <identifier-list>
+│   │   │   ├── IDENTIFIER(x)
+│   │   │   ├── COMMA(,)
+│   │   │   └── IDENTIFIER(y)
+│   │   ├── COLON(:)
+│   │   ├── <type>
+│   │   │   └── KEYWORD(integer)
+│   │   └── SEMICOLON(;)
+├── <compound-statement>
+│   ├── KEYWORD(mulai)
+│   ├── <statement-list>
+│   │   ├── <assignment-statement>
+│   │   │   ├── IDENTIFIER(x)
+│   │   │   ├── ASSIGN_OPERATOR(:=)
+│   │   │   ├── <expression>
+│   │   │   │   ├── <simple-expression>
+│   │   │   │   │   ├── <term>
+│   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   └── NUMBER(10)
+│   │   ├── SEMICOLON(;)
+│   │   ├── <if-statement>
+│   │   │   ├── KEYWORD(jika)
+│   │   │   ├── <expression>
+│   │   │   │   ├── <simple-expression>
+│   │   │   │   │   ├── <term>
+│   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   └── IDENTIFIER(x)
+│   │   │   │   ├── RELATIONAL_OPERATOR(>)
+│   │   │   │   ├── <simple-expression>
+│   │   │   │   │   ├── <term>
+│   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   └── NUMBER(5)
+│   │   │   ├── KEYWORD(maka)
+│   │   │   ├── <assignment-statement>
+│   │   │   │   ├── IDENTIFIER(y)
+│   │   │   │   ├── ASSIGN_OPERATOR(:=)
+│   │   │   │   ├── <expression>
+│   │   │   │   │   ├── <simple-expression>
+│   │   │   │   │   │   ├── <term>
+│   │   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   │   └── NUMBER(1)
+│   │   │   ├── KEYWORD(selain-itu)
+│   │   │   ├── <assignment-statement>
+│   │   │   │   ├── IDENTIFIER(y)
+│   │   │   │   ├── ASSIGN_OPERATOR(:=)
+│   │   │   │   ├── <expression>
+│   │   │   │   │   ├── <simple-expression>
+│   │   │   │   │   │   ├── <term>
+│   │   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   │   └── NUMBER(0)
+│   │   ├── SEMICOLON(;)
+│   │   ├── <procedure-call>
+│   │   │   ├── IDENTIFIER(writeln)
+│   │   │   ├── LPARENTHESIS(()
+│   │   │   ├── <parameter-list>
+│   │   │   │   ├── <expression>
+│   │   │   │   │   ├── <simple-expression>
+│   │   │   │   │   │   ├── <term>
+│   │   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   │   └── STRING_LITERAL('Y = ')
+│   │   │   │   ├── COMMA(,)
+│   │   │   │   ├── <expression>
+│   │   │   │   │   ├── <simple-expression>
+│   │   │   │   │   │   ├── <term>
+│   │   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   │   └── IDENTIFIER(y)
+│   │   │   └── RPARENTHESIS())
+│   │   └── SEMICOLON(;)
+│   └── KEYWORD(selesai)
+└── DOT(.)

@@ -1,0 +1,98 @@
+=== Parse Tree ===
+<program>
+├── <program-header>
+│   ├── KEYWORD(program)
+│   ├── IDENTIFIER(TestRepeat)
+│   └── SEMICOLON(;)
+├── <declaration-part>
+│   ├── <var-declaration>
+│   │   ├── KEYWORD(variabel)
+│   │   ├── <identifier-list>
+│   │   │   ├── IDENTIFIER(i)
+│   │   │   ├── COMMA(,)
+│   │   │   └── IDENTIFIER(sum)
+│   │   ├── COLON(:)
+│   │   ├── <type>
+│   │   │   └── KEYWORD(integer)
+│   │   └── SEMICOLON(;)
+├── <compound-statement>
+│   ├── KEYWORD(mulai)
+│   ├── <statement-list>
+│   │   ├── <assignment-statement>
+│   │   │   ├── IDENTIFIER(i)
+│   │   │   ├── ASSIGN_OPERATOR(:=)
+│   │   │   ├── <expression>
+│   │   │   │   ├── <simple-expression>
+│   │   │   │   │   ├── <term>
+│   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   └── NUMBER(1)
+│   │   ├── SEMICOLON(;)
+│   │   ├── <assignment-statement>
+│   │   │   ├── IDENTIFIER(sum)
+│   │   │   ├── ASSIGN_OPERATOR(:=)
+│   │   │   ├── <expression>
+│   │   │   │   ├── <simple-expression>
+│   │   │   │   │   ├── <term>
+│   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   └── NUMBER(0)
+│   │   ├── SEMICOLON(;)
+│   │   ├── <repeat-statement>
+│   │   │   ├── KEYWORD(ulangi)
+│   │   │   ├── <statement-list>
+│   │   │   │   ├── <assignment-statement>
+│   │   │   │   │   ├── IDENTIFIER(sum)
+│   │   │   │   │   ├── ASSIGN_OPERATOR(:=)
+│   │   │   │   │   ├── <expression>
+│   │   │   │   │   │   ├── <simple-expression>
+│   │   │   │   │   │   │   ├── <term>
+│   │   │   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   │   │   └── IDENTIFIER(sum)
+│   │   │   │   │   │   │   ├── ARITHMETIC_OPERATOR(+)
+│   │   │   │   │   │   │   ├── <term>
+│   │   │   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   │   │   └── IDENTIFIER(i)
+│   │   │   │   ├── SEMICOLON(;)
+│   │   │   │   ├── <assignment-statement>
+│   │   │   │   │   ├── IDENTIFIER(i)
+│   │   │   │   │   ├── ASSIGN_OPERATOR(:=)
+│   │   │   │   │   ├── <expression>
+│   │   │   │   │   │   ├── <simple-expression>
+│   │   │   │   │   │   │   ├── <term>
+│   │   │   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   │   │   └── IDENTIFIER(i)
+│   │   │   │   │   │   │   ├── ARITHMETIC_OPERATOR(+)
+│   │   │   │   │   │   │   ├── <term>
+│   │   │   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   │   │   └── NUMBER(1)
+│   │   │   │   └── SEMICOLON(;)
+│   │   │   ├── KEYWORD(sampai)
+│   │   │   ├── <expression>
+│   │   │   │   ├── <simple-expression>
+│   │   │   │   │   ├── <term>
+│   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   └── IDENTIFIER(i)
+│   │   │   │   ├── RELATIONAL_OPERATOR(>)
+│   │   │   │   ├── <simple-expression>
+│   │   │   │   │   ├── <term>
+│   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   └── NUMBER(10)
+│   │   ├── SEMICOLON(;)
+│   │   ├── <procedure-call>
+│   │   │   ├── IDENTIFIER(writeln)
+│   │   │   ├── LPARENTHESIS(()
+│   │   │   ├── <parameter-list>
+│   │   │   │   ├── <expression>
+│   │   │   │   │   ├── <simple-expression>
+│   │   │   │   │   │   ├── <term>
+│   │   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   │   └── STRING_LITERAL('Sum = ')
+│   │   │   │   ├── COMMA(,)
+│   │   │   │   ├── <expression>
+│   │   │   │   │   ├── <simple-expression>
+│   │   │   │   │   │   ├── <term>
+│   │   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   │   └── IDENTIFIER(sum)
+│   │   │   └── RPARENTHESIS())
+│   │   └── SEMICOLON(;)
+│   └── KEYWORD(selesai)
+└── DOT(.)
