@@ -1,12 +1,9 @@
-program TestRepeat;
+program TestArray;
 variabel
-    i, sum: integer;
+    numbers: larik[1..10] dari integer;
+    i: integer;
 mulai
-    i := 1;
-    sum := 0;
-    ulangi
-        sum := sum + i;
-        i := i + 1;
-    sampai i > 10;
-    writeln('Sum = ', sum);
+    untuk i := 1 ke 10 lakukan
+        numbers := i * 2;
+    writeln('Done');
 selesai.

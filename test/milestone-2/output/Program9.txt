@@ -2,15 +2,29 @@
 <program>
 ├── <program-header>
 │   ├── KEYWORD(program)
-│   ├── IDENTIFIER(TestRepeat)
+│   ├── IDENTIFIER(TestArray)
 │   └── SEMICOLON(;)
 ├── <declaration-part>
 │   ├── <var-declaration>
 │   │   ├── KEYWORD(variabel)
 │   │   ├── <identifier-list>
-│   │   │   ├── IDENTIFIER(i)
-│   │   │   ├── COMMA(,)
-│   │   │   └── IDENTIFIER(sum)
+│   │   │   └── IDENTIFIER(numbers)
+│   │   ├── COLON(:)
+│   │   ├── <type>
+│   │   │   ├── <array-type>
+│   │   │   │   ├── KEYWORD(larik)
+│   │   │   │   ├── LBRACKET([)
+│   │   │   │   ├── <range>
+│   │   │   │   │   ├── NUMBER(1)
+│   │   │   │   │   ├── RANGE_OPERATOR(..)
+│   │   │   │   │   └── NUMBER(10)
+│   │   │   │   ├── RBRACKET(])
+│   │   │   │   ├── KEYWORD(dari)
+│   │   │   │   ├── <type>
+│   │   │   │   │   └── KEYWORD(integer)
+│   │   ├── SEMICOLON(;)
+│   │   ├── <identifier-list>
+│   │   │   └── IDENTIFIER(i)
 │   │   ├── COLON(:)
 │   │   ├── <type>
 │   │   │   └── KEYWORD(integer)
@@ -18,7 +32,8 @@
 ├── <compound-statement>
 │   ├── KEYWORD(mulai)
 │   ├── <statement-list>
-│   │   ├── <assignment-statement>
+│   │   ├── <for-statement>
+│   │   │   ├── KEYWORD(untuk)
 │   │   │   ├── IDENTIFIER(i)
 │   │   │   ├── ASSIGN_OPERATOR(:=)
 │   │   │   ├── <expression>
@@ -26,56 +41,24 @@
 │   │   │   │   │   ├── <term>
 │   │   │   │   │   │   ├── <factor>
 │   │   │   │   │   │   │   └── NUMBER(1)
-│   │   ├── SEMICOLON(;)
-│   │   ├── <assignment-statement>
-│   │   │   ├── IDENTIFIER(sum)
-│   │   │   ├── ASSIGN_OPERATOR(:=)
+│   │   │   ├── KEYWORD(ke)
 │   │   │   ├── <expression>
-│   │   │   │   ├── <simple-expression>
-│   │   │   │   │   ├── <term>
-│   │   │   │   │   │   ├── <factor>
-│   │   │   │   │   │   │   └── NUMBER(0)
-│   │   ├── SEMICOLON(;)
-│   │   ├── <repeat-statement>
-│   │   │   ├── KEYWORD(ulangi)
-│   │   │   ├── <statement-list>
-│   │   │   │   ├── <assignment-statement>
-│   │   │   │   │   ├── IDENTIFIER(sum)
-│   │   │   │   │   ├── ASSIGN_OPERATOR(:=)
-│   │   │   │   │   ├── <expression>
-│   │   │   │   │   │   ├── <simple-expression>
-│   │   │   │   │   │   │   ├── <term>
-│   │   │   │   │   │   │   │   ├── <factor>
-│   │   │   │   │   │   │   │   │   └── IDENTIFIER(sum)
-│   │   │   │   │   │   │   ├── ARITHMETIC_OPERATOR(+)
-│   │   │   │   │   │   │   ├── <term>
-│   │   │   │   │   │   │   │   ├── <factor>
-│   │   │   │   │   │   │   │   │   └── IDENTIFIER(i)
-│   │   │   │   ├── SEMICOLON(;)
-│   │   │   │   ├── <assignment-statement>
-│   │   │   │   │   ├── IDENTIFIER(i)
-│   │   │   │   │   ├── ASSIGN_OPERATOR(:=)
-│   │   │   │   │   ├── <expression>
-│   │   │   │   │   │   ├── <simple-expression>
-│   │   │   │   │   │   │   ├── <term>
-│   │   │   │   │   │   │   │   ├── <factor>
-│   │   │   │   │   │   │   │   │   └── IDENTIFIER(i)
-│   │   │   │   │   │   │   ├── ARITHMETIC_OPERATOR(+)
-│   │   │   │   │   │   │   ├── <term>
-│   │   │   │   │   │   │   │   ├── <factor>
-│   │   │   │   │   │   │   │   │   └── NUMBER(1)
-│   │   │   │   └── SEMICOLON(;)
-│   │   │   ├── KEYWORD(sampai)
-│   │   │   ├── <expression>
-│   │   │   │   ├── <simple-expression>
-│   │   │   │   │   ├── <term>
-│   │   │   │   │   │   ├── <factor>
-│   │   │   │   │   │   │   └── IDENTIFIER(i)
-│   │   │   │   ├── RELATIONAL_OPERATOR(>)
 │   │   │   │   ├── <simple-expression>
 │   │   │   │   │   ├── <term>
 │   │   │   │   │   │   ├── <factor>
 │   │   │   │   │   │   │   └── NUMBER(10)
+│   │   │   ├── KEYWORD(lakukan)
+│   │   │   ├── <assignment-statement>
+│   │   │   │   ├── IDENTIFIER(numbers)
+│   │   │   │   ├── ASSIGN_OPERATOR(:=)
+│   │   │   │   ├── <expression>
+│   │   │   │   │   ├── <simple-expression>
+│   │   │   │   │   │   ├── <term>
+│   │   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   │   └── IDENTIFIER(i)
+│   │   │   │   │   │   │   ├── ARITHMETIC_OPERATOR(*)
+│   │   │   │   │   │   │   ├── <factor>
+│   │   │   │   │   │   │   │   └── NUMBER(2)
 │   │   ├── SEMICOLON(;)
 │   │   ├── <procedure-call>
 │   │   │   ├── IDENTIFIER(writeln)
@@ -85,13 +68,7 @@
 │   │   │   │   │   ├── <simple-expression>
 │   │   │   │   │   │   ├── <term>
 │   │   │   │   │   │   │   ├── <factor>
-│   │   │   │   │   │   │   │   └── STRING_LITERAL('Sum = ')
-│   │   │   │   ├── COMMA(,)
-│   │   │   │   ├── <expression>
-│   │   │   │   │   ├── <simple-expression>
-│   │   │   │   │   │   ├── <term>
-│   │   │   │   │   │   │   ├── <factor>
-│   │   │   │   │   │   │   │   └── IDENTIFIER(sum)
+│   │   │   │   │   │   │   │   └── STRING_LITERAL('Done')
 │   │   │   └── RPARENTHESIS())
 │   │   └── SEMICOLON(;)
 │   └── KEYWORD(selesai)
