@@ -1,14 +1,14 @@
-program arrays;
-var
+program larikprogram;
+variabel
   i: integer;
-  arr: array[1..5] of integer;
-begin
-  while true do
+  arr: larik[1..5] dari integer;
+mulai
+  selama true lakukan
     arr[i] := i * i;
 
-  for i := 5 downto 1 do
+  untuk i := 5 turun-ke 1 lakukan
     arr[i] := arr[i] + 1;
 
-  if arr[1] <= arr[2] then
+  jika arr[1] <= arr[2] maka
     arr[3] := arr[1] + arr[2]; 
-end.
+selesai.

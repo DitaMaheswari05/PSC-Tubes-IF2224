@@ -1,9 +1,7 @@
-program COMMENT;
-var
+program bebas;
+variabel
   ch: char;
-begin
-  { komentar gaya kurung kurawal }
-  (* komentar gaya bintang-kurung *)
+mulai
   ch := 'A';
   writeln('Dont panic: value = ', ch);  
-end.
+selesai.
