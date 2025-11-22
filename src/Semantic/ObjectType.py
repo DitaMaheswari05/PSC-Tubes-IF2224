@@ -22,7 +22,7 @@ class DataType(Enum):
 # Identifier table (tab)
 class TabEntry:
     def __init__(self, identifier: str, obj: ObjectType, data_type: DataType, ref: int = 0, nrm: int = 1, lev: int = 0, adr: int = 0, link: int = 0):
-        self.id = id
+        self.id = identifier
         self.obj = obj
         self.type = data_type
         self.ref = ref
@@ -47,9 +47,11 @@ class BTabEntry:
 
 # Array Type Table (atab)
 class ATabEntry:
-    def __init__(self, xtyp: DataType, etyp: DataType, eref: int = 0, low: int = 0, high: int = 0, elsz: int = 1, size: int = 0):
+    def __init__(self, xtyp: DataType, etyp: DataType, eref: int = 0, 
+                 low: int = 0, high: int = 0, elsz: int = 1, size: int = 0):
         self.xtyp = xtyp
         self.etyp = etyp
+        self.eref = eref
         self.low = low
         self.high = high
         self.elsz = elsz

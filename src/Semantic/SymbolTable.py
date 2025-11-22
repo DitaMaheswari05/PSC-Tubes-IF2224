@@ -81,7 +81,7 @@ class SymbolTable:
         return None
     
     # masukan entri array baru ke atab
-    def entry_array(self, xtyp: DataType, etyp: DataType, eref: int, low: int, high: int, elsz: int) -> int :
+    def enter_array(self, xtyp: DataType, etyp: DataType, eref: int, low: int, high: int, elsz: int) -> int :
         size = (high - low + 1) * elsz
         entry = ATabEntry(xtyp, etyp, eref, low, high, elsz, size)
         self.atab.append(entry)
