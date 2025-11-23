@@ -2,11 +2,11 @@
 
 from typing import Optional, List
 from Parser.ast import *
-from Semantic.SemanticAnalyzerBase import SemanticAnalyzerBase
-from Semantic.SemanticError import SemanticError, TypeMismatchError
-from Semantic.SymbolTable import ObjectType, DataType
-from Semantic.DecoratedASTNode import *
-from Semantic.ExpressionVisitor import ExpressionVisitor
+from src.Semantic.Visitor.SemanticAnalyzerBase import SemanticAnalyzerBase
+from src.Semantic.Visitor.SemanticError import SemanticError, TypeMismatchError
+from src.Semantic.SymbolTable.SymbolTable import ObjectType, DataType
+from src.Semantic.DecoratedAST.DecoratedASTNode import *
+from src.Semantic.Visitor.ExpressionVisitor import ExpressionVisitor
 # kayaknya juga butuh array, proc and func visitor
 from Repository.TokenType import TokenType
 from Model.Token import Token

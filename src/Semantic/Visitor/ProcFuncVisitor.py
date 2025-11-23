@@ -2,10 +2,10 @@
 
 from typing import List
 from Parser.ast import *
-from Semantic.SemanticAnalyzerBase import SemanticAnalyzerBase
-from Semantic.SemanticError import *
-from Semantic.SymbolTable import *
-from Semantic.DecoratedASTNode import *
+from src.Semantic.Visitor.SemanticAnalyzerBase import SemanticAnalyzerBase
+from src.Semantic.Visitor.SemanticError import *
+from src.Semantic.SymbolTable.SymbolTable import *
+from src.Semantic.DecoratedAST.DecoratedASTNode import *
 from Repository.TokenType import TokenType
 from Model.Token import Token
 

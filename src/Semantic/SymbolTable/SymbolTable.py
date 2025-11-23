@@ -1,4 +1,4 @@
-from ObjectType import *
+from src.Semantic.SymbolTable.ObjectType import *
 from typing import List, Optional
 
 class SymbolTable:

@@ -1,11 +1,11 @@
 # ini template aja, atur-atur sesuai kebutuhan
 from Parser.ast import *
-from Semantic.SemanticAnalyzerBase import SemanticAnalyzerBase
-from Semantic.SemanticError import *
-from Semantic.SymbolTable import *
-from Semantic.DecoratedASTNode import *
-from Semantic.ArrayAccessVisitor import ArrayAccessVisitor
-from src.Semantic.ProcFuncVisitor import ProcFuncVisitor
+from src.Semantic.Visitor.SemanticAnalyzerBase import SemanticAnalyzerBase
+from src.Semantic.Visitor.SemanticError import *
+from src.Semantic.SymbolTable.SymbolTable import *
+from src.Semantic.DecoratedAST.DecoratedASTNode import *
+from src.Semantic.Visitor.ArrayAccessVisitor import ArrayAccessVisitor
+from src.Semantic.Visitor.ProcFuncVisitor import ProcFuncVisitor
 from Repository.TokenType import TokenType
 from Model.Token import Token
 

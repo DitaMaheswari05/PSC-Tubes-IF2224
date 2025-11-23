@@ -1,8 +1,8 @@
 from typing import Optional, List, Any
 from Parser.ast import *
-from Semantic.SymbolTable import *
-from Semantic.DecoratedASTNode import *
-from Semantic.SemanticError import *
+from src.Semantic.SymbolTable.SymbolTable import *
+from src.Semantic.DecoratedAST.DecoratedASTNode import *
+from src.Semantic.Visitor.SemanticError import *
 from Repository.TokenType import TokenType
 from Model.Token import Token
 
