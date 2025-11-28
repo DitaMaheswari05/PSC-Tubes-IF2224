@@ -131,6 +131,7 @@ class SymbolTable:
             print("|{:>4} | {:7} | {:7} | {:7} | {:7} |".format(
                 idx, entry.last, entry.lpar, entry.psze, entry.vsze))
         
+        print("|" + "-" * 58 + "|")
         print("=" * 60)
         
         # ATAB TABLE (if exists)
@@ -148,4 +149,5 @@ class SymbolTable:
                 print("|{:>4} | {:7} | {:7} | {:5} | {:5} | {:5} | {:5} | {:6} |".format(
                     idx, xtyp_str, etyp_str, entry.eref, entry.low, entry.high, entry.elsz, entry.size))
             
+            print("|" + "-" * 78 + "|")
             print("=" * 80)

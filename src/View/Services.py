@@ -181,20 +181,22 @@ class Services: # kek class panggil func dari berbagai class
     def displayDecoratedAST(self, decoratedAST: ProgramASTNode):
         # Menampilkan decorated AST dengan anotasi
         if decoratedAST:
-            print("\n=== Decorated AST ===")
+            print("\n" + "=" * 90)
+            print("| DECORATED ABSTRACT SYNTAX TREE (AST)                                            |")
+            print("=" * 90)
             try:
                 print(decoratedAST.to_string())
             except UnicodeEncodeError:
                 # Fallback untuk encoding error
                 tree_string = decoratedAST.to_string()
                 print(tree_string.encode('utf-8', errors='replace').decode('utf-8', errors='replace'))
+            print("=" * 90)
         else:
             print("Decorated AST kosong!")
     
     def displaySymbolTables(self):
         # Menampilkan symbol tables (tab, btab, atab)
         if self.semanticAnalyzer:
-            print("\n=== Symbol Tables ===")
             self.semanticAnalyzer.print_symbol_tables()
         else:
             print("Semantic analyzer belum diinisialisasi")
