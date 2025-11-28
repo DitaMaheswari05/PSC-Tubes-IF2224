@@ -102,23 +102,50 @@ class SymbolTable:
    
     # buat debug isi dari tab, atab, btab 
     def print_tables(self):
-        print("\n=== TAB (Identifier Table) ===")
-        print(f"{'Idx':<5} {'Identifier':<15} {'Obj':<12} {'Type':<10} {'Ref':<5} {'Nrm':<5} {'Lev':<5} {'Adr':<5} {'Link':<5}")
-        print("-" * 80)
+        # TAB TABLE
+        print("\n" + "=" * 90)
+        print("| SYMBOL TABLE (TAB) - Identifier Table                                             |")
+        print("=" * 90)
+        print("|{:>4} | {:20} | {:10} | {:7} | {:3} | {:3} | {:3} | {:3} | {:3} |".format(
+            "Idx", "Identifier", "Object", "Type", "Ref", "Nrm", "Lev", "Adr", "Link"))
+        print("|" + "-" * 88 + "|")
+        
         for idx, entry in enumerate(self.tab):
-            if idx < 29:  # Skip reserved
+            if idx < 29:  # Skip reserved words
                 continue
-            print(f"{idx:<5} {entry.id:<15} {entry.obj.value:<12} {entry.type.value:<10} {entry.ref:<5} {entry.nrm:<5} {entry.lev:<5} {entry.adr:<5} {entry.link:<5}")
+            type_str = str(entry.type.value) if hasattr(entry.type, 'value') else str(entry.type)
+            obj_str = entry.obj.value if hasattr(entry.obj, 'value') else str(entry.obj)
+            print("|{:>4} | {:20} | {:10} | {:7} | {:3} | {:3} | {:3} | {:3} | {:3} |".format(
+                idx, entry.id[:20], obj_str[:10], type_str[:7], entry.ref, entry.nrm, entry.lev, entry.adr, entry.link))
         
-        print("\n=== BTAB (Block Table) ===")
-        print(f"{'Idx':<5} {'Last':<10} {'Lpar':<10} {'Psze':<10} {'Vsze':<10}")
-        print("-" * 50)
+        print("=" * 90)
+        
+        # BTAB TABLE
+        print("\n" + "=" * 60)
+        print("| BLOCK TABLE (BTAB)                                            |")
+        print("=" * 60)
+        print("|{:>4} | {:7} | {:7} | {:7} | {:7} |".format("Idx", "Last", "Lpar", "Psze", "Vsze"))
+        print("|" + "-" * 58 + "|")
+        
         for idx, entry in enumerate(self.btab):
-            print(f"{idx:<5} {entry.last:<10} {entry.lpar:<10} {entry.psze:<10} {entry.vsze:<10}")
+            print("|{:>4} | {:7} | {:7} | {:7} | {:7} |".format(
+                idx, entry.last, entry.lpar, entry.psze, entry.vsze))
         
+        print("=" * 60)
+        
+        # ATAB TABLE (if exists)
         if self.atab:
-            print("\n=== ATAB (Array Table) ===")
-            print(f"{'Idx':<5} {'Xtyp':<10} {'Etyp':<10} {'Eref':<5} {'Low':<5} {'High':<5} {'Elsz':<5} {'Size':<5}")
-            print("-" * 60)
+            print("\n" + "=" * 80)
+            print("| ARRAY TABLE (ATAB)                                                              |")
+            print("=" * 80)
+            print("|{:>4} | {:7} | {:7} | {:5} | {:5} | {:5} | {:5} | {:6} |".format(
+                "Idx", "Xtyp", "Etyp", "Eref", "Low", "High", "Elsz", "Size"))
+            print("|" + "-" * 78 + "|")
+            
             for idx, entry in enumerate(self.atab):
-                print(f"{idx:<5} {entry.xtyp.value:<10} {entry.etyp.value:<10} {entry.eref:<5} {entry.low:<5} {entry.high:<5} {entry.elsz:<5} {entry.size:<5}")
+                xtyp_str = str(entry.xtyp.value) if hasattr(entry.xtyp, 'value') else str(entry.xtyp)
+                etyp_str = str(entry.etyp.value) if hasattr(entry.etyp, 'value') else str(entry.etyp)
+                print("|{:>4} | {:7} | {:7} | {:5} | {:5} | {:5} | {:5} | {:6} |".format(
+                    idx, xtyp_str, etyp_str, entry.eref, entry.low, entry.high, entry.elsz, entry.size))
+            
+            print("=" * 80)
