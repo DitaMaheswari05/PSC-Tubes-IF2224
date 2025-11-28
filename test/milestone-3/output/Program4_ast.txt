@@ -1,2 +1,51 @@
 === Decorated AST ===
-<Program> [type:void, tab:29, lev:0]
+ProgramNode(name: 'yangpentingdesimaldah')
+├── Declarations
+│   ├── VarDecl('iniDesimal') → tab_index:30, type:real, lev:0
+│   ├── VarDecl('iniScientific') → tab_index:31, type:real, lev:0
+│   ├── VarDecl('samaNeg') → tab_index:32, type:real, lev:0
+│   ├── VarDecl('biasa') → tab_index:33, type:real, lev:0
+└── Block
+│   └── Block → block_index:1, lev:1
+│   │   ├── Assign('iniDesimal' := ...)
+│   │   │   ├── 'iniDesimal' → tab_index:30, type:real
+│   │   │   └── 0.1213123 → type:real
+│   │   ├── Assign('iniScientific' := ...)
+│   │   │   ├── 'iniScientific' → tab_index:31, type:real
+│   │   │   └── 1.23e+21 → type:real
+│   │   ├── Assign('samaNeg' := ...)
+│   │   │   ├── 'samaNeg' → tab_index:32, type:real
+│   │   │   └── -1.24e-11 → type:real
+│   │   ├── Assign('biasa' := ...)
+│   │   │   ├── 'biasa' → tab_index:33, type:real
+│   │   │   └── 123.456 → type:real
+│   │   ├── writeln(...) → predefined
+│   │   │   └── 0.1213123 → type:real
+│   │   ├── writeln(...) → predefined
+│   │   │   └── 1.23e+21 → type:real
+│   │   ├── writeln(...) → predefined
+│   │   │   └── -1.24e-11 → type:real
+│   │   ├── writeln(...) → predefined
+│   │   │   └── 123.456 → type:real
+│   │   ├── writeln(...) → predefined
+│   │   │   └── ""Dah pIndah"" → type:string
+│   │   ├── writeln(...) → predefined
+│   │   │   └── ""Dah pIndah"" → type:string
+│   │   ├── writeln(...) → predefined
+│   │   │   └── ""Dah pIndah"" → type:string
+│   │   ├── writeln(...) → predefined
+│   │   │   └── ""Dah pIndah"" → type:string
+│   │   ├── writeln(...) → predefined
+│   │   │   └── ""Dah pIndah"" → type:string
+│   │   ├── writeln(...) → predefined
+│   │   │   └── BinOp '-' → type:real
+│   │   │   │   ├── 'iniScientific' → tab_index:31, type:real
+│   │   │   │   └── 'samaNeg' → tab_index:32, type:real
+│   │   ├── writeln(...) → predefined
+│   │   │   └── BinOp '-' → type:real
+│   │   │   │   ├── -1.24e-11 → type:real
+│   │   │   │   └── -1.24e-11 → type:real
+│   │   └── writeln(...) → predefined
+│   │   │   └── BinOp 'bagi' → type:integer
+│   │   │   │   ├── 'biasa' → tab_index:33, type:real
+│   │   │   │   └── 2 → type:integer

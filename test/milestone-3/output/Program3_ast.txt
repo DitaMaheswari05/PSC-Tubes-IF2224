@@ -1,2 +1,50 @@
 === Decorated AST ===
-<Program> [type:void, tab:29, lev:0]
+ProgramNode(name: 'larikprogram')
+|-- Declarations
+|   |-- VarDecl('i') -> tab_index:30, type:integer, lev:0
+|   |-- VarDecl('arr') -> tab_index:31, type:array, lev:0
+`-- Block
+|   `-- Block -> block_index:1, lev:1
+|   |   |-- For 'i' to (...) -> type:void
+|   |   |   |-- start
+|   |   |   |   `-- 1 -> type:integer
+|   |   |   |-- end
+|   |   |   |   `-- 5 -> type:integer
+|   |   |   `-- body
+|   |   |   |   `-- Assign('arr' := ...)
+|   |   |   |   |   |-- 'arr' -> tab_index:31, type:integer
+|   |   |   |   |   `-- BinOp '*' -> type:integer
+|   |   |   |   |   |   |-- 'i' -> tab_index:30, type:integer
+|   |   |   |   |   |   `-- 'i' -> tab_index:30, type:integer
+|   |   |-- For 'i' downto (...) -> type:void
+|   |   |   |-- start
+|   |   |   |   `-- 5 -> type:integer
+|   |   |   |-- end
+|   |   |   |   `-- 1 -> type:integer
+|   |   |   `-- body
+|   |   |   |   `-- Assign('arr' := ...)
+|   |   |   |   |   |-- 'arr' -> tab_index:31, type:integer
+|   |   |   |   |   `-- BinOp '+' -> type:integer
+|   |   |   |   |   |   |-- ArrayAccess [...] -> type:integer
+|   |   |   |   |   |   |   |-- 'arr' -> tab_index:31, type:array
+|   |   |   |   |   |   |   `-- 'i' -> tab_index:30, type:integer
+|   |   |   |   |   |   `-- 1 -> type:integer
+|   |   `-- If (...) -> type:void
+|   |   |   |-- condition
+|   |   |   |   `-- BinOp '<=' -> type:boolean
+|   |   |   |   |   |-- ArrayAccess [...] -> type:integer
+|   |   |   |   |   |   |-- 'arr' -> tab_index:31, type:array
+|   |   |   |   |   |   `-- 1 -> type:integer
+|   |   |   |   |   `-- ArrayAccess [...] -> type:integer
+|   |   |   |   |   |   |-- 'arr' -> tab_index:31, type:array
+|   |   |   |   |   |   `-- 2 -> type:integer
+|   |   |   `-- then
+|   |   |   |   `-- Assign('arr' := ...)
+|   |   |   |   |   |-- 'arr' -> tab_index:31, type:integer
+|   |   |   |   |   `-- BinOp '+' -> type:integer
+|   |   |   |   |   |   |-- ArrayAccess [...] -> type:integer
+|   |   |   |   |   |   |   |-- 'arr' -> tab_index:31, type:array
+|   |   |   |   |   |   |   `-- 1 -> type:integer
+|   |   |   |   |   |   `-- ArrayAccess [...] -> type:integer
+|   |   |   |   |   |   |   |-- 'arr' -> tab_index:31, type:array
+|   |   |   |   |   |   |   `-- 2 -> type:integer
