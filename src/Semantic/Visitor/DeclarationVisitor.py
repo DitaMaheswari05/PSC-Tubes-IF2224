@@ -169,22 +169,11 @@ class DeclarationVisitor(SemanticAnalyzerBase):
         """Visit procedure declaration"""
         # Ambil nama prosedur dari IDENTIFIER
         proc_name = None
-        param_list = None
-        declarations = []
-        compound_stmt = None
         
         for child in node.children:
             if isinstance(child, Token) and child.tokenType == TokenType.IDENTIFIER:
                 proc_name = child.value
-            elif isinstance(child, FormalParameterListNode):
-                param_list = self.visit_formal_parameter_list(child)
-            elif isinstance(child, DeclarationPartNode):
-                declarations = self.visit_declaration_part(child)
-            elif isinstance(child, CompoundStatementNode):
-                from Semantic.Visitor.StatementVisitor import StatementVisitor
-                stmt_visitor = StatementVisitor()
-                stmt_visitor.symbol_table = self.symbol_table
-                compound_stmt = stmt_visitor.visit_compound_statement(child)
+                break
         
         if not proc_name:
             raise SemanticError("Procedure name not found")
@@ -211,6 +200,22 @@ class DeclarationVisitor(SemanticAnalyzerBase):
             DataType.VOID,
             block_idx
         )
+        
+        # Now process parameters, declarations, and compound statement IN ORDER within the new block
+        param_list = None
+        declarations = []
+        compound_stmt = None
+        
+        for child in node.children:
+            if isinstance(child, FormalParameterListNode):
+                param_list = self.visit_formal_parameter_list(child)
+            elif isinstance(child, DeclarationPartNode):
+                declarations = self.visit_declaration_part(child)
+            elif isinstance(child, CompoundStatementNode):
+                from Semantic.Visitor.StatementVisitor import StatementVisitor
+                stmt_visitor = StatementVisitor()
+                stmt_visitor.symbol_table = self.symbol_table
+                compound_stmt = stmt_visitor.visit_compound_statement(child)
         
         # Create AST node
         proc_ast = ProcedureDeclASTNode(proc_name)

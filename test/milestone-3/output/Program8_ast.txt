@@ -1,2 +1,26 @@
 === Decorated AST ===
-<Program> [type:void, tab:29, lev:0]
+ProgramNode(name: 'TestIf')
+|-- Declarations
+|   |-- VarDecl('x') -> tab_index:30, type:integer, lev:0
+|   |-- VarDecl('y') -> tab_index:31, type:integer, lev:0
+`-- Block
+|   `-- Block -> block_index:1, lev:1
+|   |   |-- Assign('x' := 10)
+|   |   |   |-- 'x' -> tab_index:30, type:integer
+|   |   |   `-- 10 -> type:integer
+|   |   |-- If-Then-Else -> type:void
+|   |   |   |-- condition
+|   |   |   |   `-- BinOp '>' -> type:boolean
+|   |   |   |   |   |-- 'x' -> tab_index:30, type:integer
+|   |   |   |   |   `-- 5 -> type:integer
+|   |   |   |-- then
+|   |   |   |   `-- Assign('y' := 1)
+|   |   |   |   |   |-- 'y' -> tab_index:31, type:integer
+|   |   |   |   |   `-- 1 -> type:integer
+|   |   |   `-- else
+|   |   |   |   `-- Assign('y' := 0)
+|   |   |   |   |   |-- 'y' -> tab_index:31, type:integer
+|   |   |   |   |   `-- 0 -> type:integer
+|   |   `-- writeln(args: 2) -> predefined
+|   |   |   |-- "'Y = '" -> type:string
+|   |   |   `-- 'y' -> tab_index:31, type:integer

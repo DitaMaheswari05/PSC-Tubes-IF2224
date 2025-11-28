@@ -4,6 +4,6 @@ variabel
     i: integer;
 mulai
     untuk i := 1 ke 10 lakukan
-        numbers := i * 2;
+        numbers[i] := i * 2;
     writeln('Done');
 selesai.

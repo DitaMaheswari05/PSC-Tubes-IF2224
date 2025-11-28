@@ -1,6 +1,6 @@
 program ErrorTest;
 variabel
-    x: integer
+    x: integer;
 mulai
     x := 5;
 selesai.

@@ -1,0 +1,20 @@
+=== Decorated AST ===
+ProgramNode(name: 'TestArray')
+|-- Declarations
+|   |-- VarDecl('numbers') -> tab_index:30, type:array, lev:0
+|   |-- VarDecl('i') -> tab_index:31, type:integer, lev:0
+`-- Block
+|   `-- Block -> block_index:1, lev:1
+|   |   |-- For 'i' to -> type:void
+|   |   |   |-- start
+|   |   |   |   `-- 1 -> type:integer
+|   |   |   |-- end
+|   |   |   |   `-- 10 -> type:integer
+|   |   |   `-- body
+|   |   |   |   `-- Assign('numbers' := ...)
+|   |   |   |   |   |-- 'numbers' -> tab_index:30, type:integer
+|   |   |   |   |   `-- BinOp '*' -> type:integer
+|   |   |   |   |   |   |-- 'i' -> tab_index:31, type:integer
+|   |   |   |   |   |   `-- 2 -> type:integer
+|   |   `-- writeln(args: 1) -> predefined
+|   |   |   `-- "'Done'" -> type:string
