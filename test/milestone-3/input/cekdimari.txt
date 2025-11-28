@@ -1,0 +1,4 @@
+input nya dari txt milestone sebelah buat bikin declaration + symbol nya
+
+
+tapi masih pake -s 

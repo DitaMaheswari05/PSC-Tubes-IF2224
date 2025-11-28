@@ -4,12 +4,12 @@ Idx   Identifier      Obj          Type       Ref   Nrm   Lev   Adr   Link
 --------------------------------------------------------------------------------
 29    logika          program      0          0     1     0     0     0    
 30    a               variable     1          0     1     0     0     29   
-31    b               variable     1          0     1     0     1     30   
-32    c               variable     1          0     1     0     2     31   
-33    ok              variable     3          0     1     0     3     32   
+31    b               variable     1          0     1     0     0     30   
+32    c               variable     1          0     1     0     0     31   
+33    ok              variable     3          0     1     0     0     32   
 
 === BTAB (Block Table) ===
 Idx   Last       Lpar       Psze       Vsze      
 --------------------------------------------------
-0     33         0          0          4         
+0     33         0          0          0         
 1     0          0          0          0         
