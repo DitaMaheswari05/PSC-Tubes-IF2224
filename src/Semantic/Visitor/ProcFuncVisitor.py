@@ -180,6 +180,8 @@ class ProcFuncVisitor(SemanticAnalyzerBase):
         
         entry = self.symbol_table.tab[tab_index]
         
+
+        
         # ref menunjuk ke block entry untuk procedure/function
         if entry.ref <= 0 or entry.ref >= len(self.symbol_table.btab):
             return []  # Tidak ada parameter
@@ -204,6 +206,7 @@ class ProcFuncVisitor(SemanticAnalyzerBase):
         # Buat list parameter
         for idx in param_indices:
             param_entry = self.symbol_table.tab[idx]
+
             if param_entry.obj == ObjectType.PARAMETER:
                 # nrm=0 berarti var parameter (by reference)
                 # nrm=1 berarti value parameter

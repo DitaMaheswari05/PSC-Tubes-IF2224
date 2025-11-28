@@ -190,16 +190,20 @@ class DeclarationVisitor(SemanticAnalyzerBase):
                     raise RedeclarationError(f"Procedure '{proc_name}' already declared in current scope")
                 current_idx = entry.link
         
-        # Create new block for procedure
-        block_idx = self.symbol_table.enter_block()
-        
-        # Register procedure in symbol table
+        # Register procedure in symbol table BEFORE entering new block
+        # so it can be called from the parent scope
         tab_idx = self.symbol_table.enter_identifier(
             proc_name,
             ObjectType.PROCEDURE,
             DataType.VOID,
-            block_idx
+            0  # Temporary, will update with block_idx later
         )
+        
+        # Create new block for procedure
+        block_idx = self.symbol_table.enter_block()
+        
+        # Update procedure entry with correct block_idx
+        self.symbol_table.tab[tab_idx].ref = block_idx
         
         # Now process parameters, declarations, and compound statement IN ORDER within the new block
         param_list = None
@@ -212,6 +216,8 @@ class DeclarationVisitor(SemanticAnalyzerBase):
             elif isinstance(child, DeclarationPartNode):
                 declarations = self.visit_declaration_part(child)
             elif isinstance(child, CompoundStatementNode):
+
+                
                 from Semantic.Visitor.StatementVisitor import StatementVisitor
                 stmt_visitor = StatementVisitor()
                 stmt_visitor.symbol_table = self.symbol_table
@@ -292,9 +298,13 @@ class DeclarationVisitor(SemanticAnalyzerBase):
         """Visit formal parameter list"""
         params = []
         
+
+        
         # Process formal parameters similar to var declaration
         i = 0
         children = node.children
+        
+
         
         # Skip LPAREN if present
         if i < len(children) and isinstance(children[i], Token) and children[i].tokenType == TokenType.LPARENTHESIS:
@@ -314,21 +324,17 @@ class DeclarationVisitor(SemanticAnalyzerBase):
                 nrm = 0
                 i += 1
             
-            # Collect parameter names
-            while i < len(children):
-                child = children[i]
-                if isinstance(child, Token):
-                    if child.tokenType == TokenType.IDENTIFIER:
+            # Collect parameter names from IdentifierListNode
+            if i < len(children) and isinstance(children[i], IdentifierListNode):
+                id_list_node = children[i]
+                # Extract identifiers from IdentifierListNode 
+                for child in id_list_node.children:
+                    if isinstance(child, Token) and child.tokenType == TokenType.IDENTIFIER:
                         identifiers.append(child.value)
-                        i += 1
-                    elif child.tokenType == TokenType.COMMA:
-                        i += 1
-                    elif child.tokenType == TokenType.COLON:
-                        i += 1
-                        break
-                    else:
-                        i += 1
-                else:
+                i += 1
+                
+                # Skip COLON
+                if i < len(children) and isinstance(children[i], Token) and children[i].tokenType == TokenType.COLON:
                     i += 1
             
             # Get parameter type
@@ -338,9 +344,11 @@ class DeclarationVisitor(SemanticAnalyzerBase):
                     param_type = self.symbol_table.get_type_from_keyword(child.value)
                     i += 1
                 elif isinstance(child, TypeNode):
-                    type_info = self._get_type_info(child)
-                    param_type = type_info[0]
-                    param_ref = type_info[1]
+                    # Extract type from TypeNode - look for KEYWORD inside
+                    for type_child in child.children:
+                        if isinstance(type_child, Token) and type_child.tokenType == TokenType.KEYWORD:
+                            param_type = self.symbol_table.get_type_from_keyword(type_child.value)
+                            break
                     i += 1
             
             # Skip semicolon or comma
@@ -351,6 +359,7 @@ class DeclarationVisitor(SemanticAnalyzerBase):
                     i += 1
             
             # Register each parameter
+
             for identifier in identifiers:
                 tab_idx = self.symbol_table.enter_identifier(
                     identifier,
@@ -359,6 +368,11 @@ class DeclarationVisitor(SemanticAnalyzerBase):
                     param_ref,
                     nrm
                 )
+                
+                # Set lpar to point to the last parameter for the current block
+                current_block_index = self.symbol_table.display[self.symbol_table.level]
+                current_block = self.symbol_table.btab[current_block_index]
+                current_block.lpar = tab_idx
                 
                 param_ast = VarDeclASTNode(identifier, param_type)
                 param_ast.annotate(data_type=param_type, tab_index=tab_idx, scope_level=self.symbol_table.level)
