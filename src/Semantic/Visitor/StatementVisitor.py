@@ -1,11 +1,11 @@
-from typing import Optional, List
-from Parser.ast import * 
-from src.Semantic.Visitor.SemanticAnalyzerBase import SemanticAnalyzerBase
-from src.Semantic.Visitor.SemanticError import *
-from src.Semantic.SymbolTable.SymbolTable import SymbolTable
-from src.Semantic.DecoratedAST.DecoratedASTNode import *
-from src.Semantic.Visitor.ExpressionVisitor import ExpressionVisitor
-from src.Semantic.Visitor.ProcFuncVisitor import ProcFuncVisitor
+from typing import List
+from Parser.ast import *
+from Semantic.Visitor.SemanticAnalyzerBase import SemanticAnalyzerBase
+from Semantic.Visitor.SemanticError import *
+from Semantic.SymbolTable.SymbolTable import SymbolTable
+from Semantic.DecoratedAST.DecoratedASTNode import *
+from Semantic.Visitor.ExpressionVisitor import ExpressionVisitor
+from Semantic.Visitor.ProcFuncVisitor import ProcFuncVisitor
 from Repository.TokenType import TokenType
 from Model.Token import Token
 
@@ -82,21 +82,28 @@ class StatementVisitor(SemanticAnalyzerBase):
 
     def visit_assignment_statement(self, node: AssignmentStatementNode) -> AssignASTNode:
         # assignment-statement -> variable := expression
+        # Also handles: array_element := expression, record_field := expression
         
         target_token = None
         expression_node = None
+        has_array_access = False
+        has_field_access = False
         
         # Ekstrak anak secara manual
         for child in node.children:
             if isinstance(child, Token) and child.tokenType == TokenType.IDENTIFIER:
                 target_token = child
+            elif isinstance(child, Token) and child.tokenType == TokenType.LBRACKET:
+                has_array_access = True
+            elif isinstance(child, Token) and child.tokenType == TokenType.DOT:
+                has_field_access = True
             elif isinstance(child, ExpressionNode):
                 expression_node = child
                 
         if not target_token or not expression_node:
             raise SemanticError("Malformed assignment statement")
 
-        # 1. Lookup Variable
+        # 1. Lookup Variable/Array/Record
         idx = self.symbol_table.lookup_identifier(target_token.value)
         if idx is None:
             raise SemanticError(f"Undeclared variable '{target_token.value}'")
@@ -107,7 +114,17 @@ class StatementVisitor(SemanticAnalyzerBase):
              raise SemanticError(f"Cannot assign to '{target_token.value}' because it is a {entry.obj.name}")
 
         target_ast = VarASTNode(target_token.value)
-        target_ast.annotate(data_type=entry.type, tab_index=idx, scope_level=entry.lev)
+        
+        # Determine target type based on access type
+        target_type = entry.type
+        if has_array_access and entry.type == DataType.ARRAY:
+            # Get array element type from atab
+            array_ref = entry.ref
+            if array_ref < len(self.symbol_table.atab):
+                array_entry = self.symbol_table.atab[array_ref]
+                target_type = array_entry.etyp  # Element type
+        
+        target_ast.annotate(data_type=target_type, tab_index=idx, scope_level=entry.lev)
 
         # 2. Visit Expression
         expr_visitor = self._get_expression_visitor()
@@ -117,11 +134,11 @@ class StatementVisitor(SemanticAnalyzerBase):
              value_ast.data_type = expr_visitor._infer_expression_type(value_ast)
 
         # 3. Type Checking
-        if entry.type != value_ast.data_type:
-            if entry.type == DataType.REAL and value_ast.data_type == DataType.INTEGER:
+        if target_type != value_ast.data_type:
+            if target_type == DataType.REAL and value_ast.data_type == DataType.INTEGER:
                 pass 
             else:
-                raise TypeMismatchError(entry.type.name, value_ast.data_type.name, f"assignment to '{target_token.value}'")
+                raise TypeMismatchError(target_type.name, value_ast.data_type.name, f"assignment to '{target_token.value}'")
 
         return AssignASTNode(target_ast, value_ast)
 

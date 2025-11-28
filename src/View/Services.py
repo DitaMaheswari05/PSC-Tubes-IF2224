@@ -6,6 +6,8 @@ from Repository.Parser import Parser as DFAParser
 from Parser.parser import SyntaxParser
 from Parser.ast import ProgramNode
 from Repository.TokenType import TokenType
+from Semantic.SemanticAnalyzer import SemanticAnalyzer
+from Semantic.DecoratedAST.DecoratedASTNode import ProgramASTNode
 import os
 
 class Services: # kek class panggil func dari berbagai class
@@ -14,6 +16,7 @@ class Services: # kek class panggil func dari berbagai class
         self.dfaParser = DFAParser()  # Renamed untuk membedakan dengan syntax parser
         self.lexer: Optional[Lexer] = None
         self.dfa: Optional[DFA] = None
+        self.semanticAnalyzer: Optional[SemanticAnalyzer] = None  # Semantic analyzer untuk milestone 3
     
     def loadDFA(self, dfaFilePath: str) -> DFA:
         try:
@@ -154,6 +157,159 @@ class Services: # kek class panggil func dari berbagai class
     def showErrorMessage(self, message: str = "err"):
         # Menampilkan pesan error
         print(f"ERROR: {message}")
+    
+    def performSemanticAnalysis(self, parseTree: ProgramNode) -> Optional[ProgramASTNode]:
+        # Melakukan semantic analysis pada parse tree
+        # Input: Parse tree dari syntax parser
+        # Output: Decorated AST dengan anotasi tipe dan symbol table
+        try:
+            # Inisialisasi semantic analyzer jika belum
+            if not self.semanticAnalyzer:
+                self.semanticAnalyzer = SemanticAnalyzer()
+            
+            # Lakukan semantic analysis
+            decoratedAST = self.semanticAnalyzer.analyze(parseTree)
+            
+            return decoratedAST
+        
+        except Exception as e:
+            import traceback
+            self.showErrorMessage(f"Semantic error: {str(e)}")
+            traceback.print_exc()
+            return None
+    
+    def displayDecoratedAST(self, decoratedAST: ProgramASTNode):
+        # Menampilkan decorated AST dengan anotasi
+        if decoratedAST:
+            print("\n=== Decorated AST ===")
+            try:
+                print(decoratedAST.to_string())
+            except UnicodeEncodeError:
+                # Fallback untuk encoding error
+                tree_string = decoratedAST.to_string()
+                print(tree_string.encode('utf-8', errors='replace').decode('utf-8', errors='replace'))
+        else:
+            print("Decorated AST kosong!")
+    
+    def displaySymbolTables(self):
+        # Menampilkan symbol tables (tab, btab, atab)
+        if self.semanticAnalyzer:
+            print("\n=== Symbol Tables ===")
+            self.semanticAnalyzer.print_symbol_tables()
+        else:
+            print("Semantic analyzer belum diinisialisasi")
+    
+    def saveDecoratedASTToFile(self, decoratedAST: ProgramASTNode, inputFilePath: str):
+        # Menyimpan decorated AST ke file
+        try:
+            outputDir = "../test/milestone-3/output"
+            os.makedirs(outputDir, exist_ok=True)
+            
+            # Dapatkan nama file dari path input
+            inputFileName = os.path.basename(inputFilePath)
+            # Ganti ekstensi dengan .txt
+            outputFileName = os.path.splitext(inputFileName)[0] + "_ast.txt"
+            outputFilePath = os.path.join(outputDir, outputFileName)
+            
+            # Tulis decorated AST ke file
+            with open(outputFilePath, 'w', encoding='utf-8') as f:
+                if decoratedAST:
+                    f.write("=== Decorated AST ===\n")
+                    f.write(decoratedAST.to_string())
+                else:
+                    f.write("Decorated AST kosong!\n")
+            
+            print(f"\nDecorated AST berhasil disimpan ke: {outputFilePath}")
+        
+        except Exception as e:
+            self.showErrorMessage(f"Gagal menyimpan decorated AST: {str(e)}")
+    
+    def saveSymbolTablesToFile(self, inputFilePath: str):
+        # Menyimpan symbol tables ke file
+        try:
+            outputDir = "../test/milestone-3/output"
+            os.makedirs(outputDir, exist_ok=True)
+            
+            # Dapatkan nama file dari path input
+            inputFileName = os.path.basename(inputFilePath)
+            # Ganti ekstensi dengan .txt
+            outputFileName = os.path.splitext(inputFileName)[0] + "_symtab.txt"
+            outputFilePath = os.path.join(outputDir, outputFileName)
+            
+            # Tulis symbol tables ke file
+            with open(outputFilePath, 'w', encoding='utf-8') as f:
+                if self.semanticAnalyzer:
+                    # Redirect print output ke file
+                    import sys
+                    old_stdout = sys.stdout
+                    sys.stdout = f
+                    
+                    self.semanticAnalyzer.print_symbol_tables()
+                    
+                    # Restore stdout
+                    sys.stdout = old_stdout
+                else:
+                    f.write("Semantic analyzer belum diinisialisasi\n")
+            
+            print(f"Symbol tables berhasil disimpan ke: {outputFilePath}")
+        
+        except Exception as e:
+            self.showErrorMessage(f"Gagal menyimpan symbol tables: {str(e)}")
+    
+    def processFileWithSemantics(self, pascalFilePath: str, dfaFilePath: str, 
+                                  showTokens: bool = False, 
+                                  showParseTree: bool = False, 
+                                  showDecoratedAST: bool = True,
+                                  showSymbolTables: bool = True,
+                                  saveOutput: bool = True) -> Optional[ProgramASTNode]:
+        # MAIN METHOD untuk milestone 3 - Full pipeline dengan semantic analysis
+        try:
+            # Validasi file path
+            if not self.validatePascalFilePath(pascalFilePath):
+                return None
+            
+            # Lexical analysis
+            self.initializeLexer(dfaFilePath)
+            sourceCode = self.loadPascalFile(pascalFilePath)
+            tokens = self.performLexicalAnalysis(sourceCode)
+            
+            # Display tokens jika diminta
+            if showTokens:
+                print("\n=== Tokens ===")
+                self.displayTokens(tokens)
+            
+            # Syntax analysis
+            parseTree = self.performSyntaxAnalysis(tokens)
+            if not parseTree:
+                return None
+            
+            # Display parse tree jika diminta
+            if showParseTree:
+                self.displayParseTree(parseTree)
+            
+            # Semantic analysis
+            decoratedAST = self.performSemanticAnalysis(parseTree)
+            if not decoratedAST:
+                return None
+            
+            # Display decorated AST jika diminta
+            if showDecoratedAST:
+                self.displayDecoratedAST(decoratedAST)
+            
+            # Display symbol tables jika diminta
+            if showSymbolTables:
+                self.displaySymbolTables()
+            
+            # Simpan output jika diminta
+            if saveOutput:
+                self.saveDecoratedASTToFile(decoratedAST, pascalFilePath)
+                self.saveSymbolTablesToFile(pascalFilePath)
+            
+            return decoratedAST
+        
+        except Exception as e:
+            self.showErrorMessage(f"err: {str(e)}")
+            return None
     
     def loadTokensFromFile(self, tokenFilePath: str) -> List[Token]:
         # Membaca hasil tokenisasi dari output milestone-1 (.txt)

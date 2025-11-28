@@ -1,0 +1,13 @@
+
+=== TAB (Identifier Table) ===
+Idx   Identifier      Obj          Type       Ref   Nrm   Lev   Adr   Link 
+--------------------------------------------------------------------------------
+29    TestIf          program      0          0     1     0     0     0    
+30    x               variable     1          0     1     0     0     29   
+31    y               variable     1          0     1     0     1     30   
+
+=== BTAB (Block Table) ===
+Idx   Last       Lpar       Psze       Vsze      
+--------------------------------------------------
+0     31         0          0          2         
+1     0          0          0          0         

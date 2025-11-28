@@ -54,5 +54,9 @@ class DFAParser:
         # Load reserved words / keywords into DFA (store as lowercase for case-insensitive match)
         if 'reserved_words' in dfaData and isinstance(dfaData['reserved_words'], dict):
             dfa.keywords = set(k.lower() for k in dfaData['reserved_words'].keys())
+            # Populate reserved_words_type mapping
+            for word, token_type_name in dfaData['reserved_words'].items():
+                if hasattr(TokenType, token_type_name):
+                    dfa.reserved_words_type[word.lower()] = getattr(TokenType, token_type_name)
         
         return dfa

@@ -1,4 +1,4 @@
-from src.Semantic.SymbolTable.ObjectType import *
+from Semantic.SymbolTable.ObjectType import *
 from typing import List, Optional
 
 class SymbolTable:
@@ -75,7 +75,7 @@ class SymbolTable:
             current_index = block.last
             while current_index != 0:
                 entry = self.tab[current_index]
-                if entry.identifier.lower() == identifier.lower():
+                if entry.id.lower() == identifier.lower():
                     return current_index
                 current_index = entry.link
         return None
@@ -108,7 +108,7 @@ class SymbolTable:
         for idx, entry in enumerate(self.tab):
             if idx < 29:  # Skip reserved
                 continue
-            print(f"{idx:<5} {entry.identifier:<15} {entry.obj.value:<12} {entry.type.value:<10} {entry.ref:<5} {entry.nrm:<5} {entry.lev:<5} {entry.adr:<5} {entry.link:<5}")
+            print(f"{idx:<5} {entry.id:<15} {entry.obj.value:<12} {entry.type.value:<10} {entry.ref:<5} {entry.nrm:<5} {entry.lev:<5} {entry.adr:<5} {entry.link:<5}")
         
         print("\n=== BTAB (Block Table) ===")
         print(f"{'Idx':<5} {'Last':<10} {'Lpar':<10} {'Psze':<10} {'Vsze':<10}")

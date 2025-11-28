@@ -1,0 +1,2 @@
+=== Decorated AST ===
+<Program> [type:void, tab:29, lev:0]

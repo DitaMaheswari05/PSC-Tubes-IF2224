@@ -1,10 +1,10 @@
 # ini template aja, atur-atur sesuai kebutuhan
 from Parser.ast import *
-from src.Semantic.Visitor.SemanticAnalyzerBase import SemanticAnalyzerBase
-from src.Semantic.Visitor.SemanticError import *
-from src.Semantic.SymbolTable.SymbolTable import *
-from src.Semantic.DecoratedAST.DecoratedASTNode import *
-from src.Semantic.Visitor.ProcFuncVisitor import ProcFuncVisitor
+from Semantic.Visitor.SemanticAnalyzerBase import SemanticAnalyzerBase
+from Semantic.Visitor.SemanticError import *
+from Semantic.SymbolTable.SymbolTable import *
+from Semantic.DecoratedAST.DecoratedASTNode import *
+from Semantic.Visitor.ProcFuncVisitor import ProcFuncVisitor
 from Repository.TokenType import TokenType
 from Model.Token import Token
 
@@ -25,7 +25,7 @@ class ExpressionVisitor(SemanticAnalyzerBase):
                     left = self.visit_simple_expression(child)
                 else:
                     right = self.visit_simple_expression(child)
-            elif isinstance(child, Token) and child.token_type == TokenType.RELATIONAL_OPERATOR:
+            elif isinstance(child, Token) and child.tokenType == TokenType.RELATIONAL_OPERATOR:
                 operator = child.value
             
         if operator and right:
@@ -88,9 +88,9 @@ class ExpressionVisitor(SemanticAnalyzerBase):
             if isinstance(child, FactorNode):
                 factors.append(self.visit_factor(child))
             elif isinstance(child, Token):
-                if child.token_type == TokenType.ARITHMETIC_OPERATOR:
+                if child.tokenType == TokenType.ARITHMETIC_OPERATOR:
                     operators.append(child.value)
-                elif child.token_type == TokenType.LOGICAL_OPERATOR and child.value == "dan":  
+                elif child.tokenType == TokenType.LOGICAL_OPERATOR and child.value == "dan":  
                     operators.append(child.value)
         
         # Bangun expression tree
@@ -135,8 +135,9 @@ class ExpressionVisitor(SemanticAnalyzerBase):
         # NOT factor
         elif isinstance(first_child, Token) and first_child.tokenType == TokenType.LOGICAL_OPERATOR and first_child.value == "tidak":
             operand = self.visit_factor(node.children[1])
-            if operand.data_type != DataType.BOOLEAN:
-                raise SemanticError(f"NOT operator requires boolean operand, got {operand.data_type.name}")
+            operand_type = operand.data_type if operand.data_type is not None else self._infer_expression_type(operand)
+            if operand_type != DataType.BOOLEAN:
+                raise SemanticError(f"NOT operator requires boolean operand, got {operand_type.name}")
             ast_node = UnaryOpASTNode("tidak", operand)
             ast_node.annotate(data_type=DataType.BOOLEAN)
             return ast_node
@@ -174,7 +175,16 @@ class ExpressionVisitor(SemanticAnalyzerBase):
     
     def _create_binary_op(self, op: str, left: DecoratedASTNode, right: DecoratedASTNode) -> BinOpASTNode:
         # Create binary operation node dengan type checking
-        result_type = self._check_type_compatibility(left.data_type, right.data_type, op)
+        # Defensive check for None data types
+        if left.data_type is None or right.data_type is None:
+            # Try to infer types if not annotated
+            left_type = left.data_type if left.data_type is not None else self._infer_expression_type(left)
+            right_type = right.data_type if right.data_type is not None else self._infer_expression_type(right)
+        else:
+            left_type = left.data_type
+            right_type = right.data_type
+            
+        result_type = self._check_type_compatibility(left_type, right_type, op)
         
         ast_node = BinOpASTNode(op, left, right)
         ast_node.annotate(data_type=result_type)

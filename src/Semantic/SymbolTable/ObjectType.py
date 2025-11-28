@@ -32,7 +32,7 @@ class TabEntry:
         self.link = link
     
     def __repr__(self):
-        return f"TabEntry(id={self.identifier}, obj={self.obj.value}, type={self.type.value}, ref={self.ref}, nrm={self.nrm}, lev={self.lev}, adr={self.adr}, link={self.link})"
+        return f"TabEntry(id={self.id}, obj={self.obj.value}, type={self.type.value}, ref={self.ref}, nrm={self.nrm}, lev={self.lev}, adr={self.adr}, link={self.link})"
 
 # Block table (btab)
 class BTabEntry:

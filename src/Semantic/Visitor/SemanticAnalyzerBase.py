@@ -1,8 +1,8 @@
 from typing import Optional, List, Any
 from Parser.ast import *
-from src.Semantic.SymbolTable.SymbolTable import *
-from src.Semantic.DecoratedAST.DecoratedASTNode import *
-from src.Semantic.Visitor.SemanticError import *
+from Semantic.SymbolTable.SymbolTable import *
+from Semantic.DecoratedAST.DecoratedASTNode import *
+from Semantic.Visitor.SemanticError import *
 from Repository.TokenType import TokenType
 from Model.Token import Token
 
@@ -130,7 +130,7 @@ class SemanticAnalyzerBase:
                     current_index = record_block.last
                     while current_index != 0:
                         entry = self.symbol_table.tab[current_index]
-                        if entry.identifier.lower() == identifier.lower():
+                        if entry.id.lower() == identifier.lower():
                             raise SemanticError(
                                 f"Field '{identifier}' sudah dideklarasikan dalam record ini"
                             )

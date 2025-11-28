@@ -1,6 +1,6 @@
 from typing import List, Optional, Any
 from Parser.ast import ASTNode
-from src.Semantic.SymbolTable.SymbolTable import *
+from Semantic.SymbolTable.SymbolTable import *
 
 class DecoratedASTNode(ASTNode):
     def __init__(self, node_type: str):

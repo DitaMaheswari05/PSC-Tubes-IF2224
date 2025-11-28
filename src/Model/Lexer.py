@@ -107,9 +107,8 @@ class Lexer:
 
             # evaluator : harus punya minimal satu digit setelah e/E
             if not self.getCurrentChar() or not self.getCurrentChar().isdigit():
-                pass
-                # # error
-                # return Token(TokenType.LEXICAL_ERROR, f"Malformed exponent in number: {lexeme}", startLine, startColumn)
+                # error - invalid scientific notation, return UNKNOWN token
+                return Token(TokenType.UNKNOWN, f"Malformed exponent in number: {lexeme}", startLine, startColumn)
 
             # scan digit setelah e/E
             while self.getCurrentChar() and self.getCurrentChar().isdigit():
@@ -159,8 +158,16 @@ class Lexer:
                 self.columnNumber = savedColumn
         
         # keyword atau identifier
-        tokenType = TokenType.KEYWORD if self.dfa.isKeyword(lexeme) else TokenType.IDENTIFIER
-        return Token(tokenType, lexeme, startLine, startColumn)
+        # cek apakah ini keyword yang punya special token type
+        if self.dfa.isKeyword(lexeme):
+            # cek di reserved_words untuk special token type
+            reserved_type = self.dfa.getReservedWordType(lexeme)
+            if reserved_type:
+                return Token(reserved_type, lexeme, startLine, startColumn)
+            else:
+                return Token(TokenType.KEYWORD, lexeme, startLine, startColumn)
+        else:
+            return Token(TokenType.IDENTIFIER, lexeme, startLine, startColumn)
     
     def scanStringLiteral(self) -> Token:
         startLine = self.lineNumber

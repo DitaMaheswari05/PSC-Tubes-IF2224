@@ -174,7 +174,7 @@ class StatementParser:
         return node
     
     def parse_if_statement(self) -> IfStatementNode:
-        # if-statement → KEYWORD(jika) expression KEYWORD(maka) statement
+        # if-statement → KEYWORD(jika) expression KEYWORD(maka) statement (SEMICOLON)? (KEYWORD(selain-itu) statement)?
         node = IfStatementNode()
         
         # 1. KEYWORD(jika)
@@ -185,7 +185,10 @@ class StatementParser:
         node.add_child(self._consume(TokenType.KEYWORD, 'maka'))
         # 4. statement
         node.add_child(self.parse_statement())
-        # 5. (KEYWORD(selain-itu) statement)? (Opsional)
+        # 5. Optional SEMICOLON (consumed but not added to AST as it's a separator)
+        if self.parser.current_token and self.parser.current_token.getType() == TokenType.SEMICOLON:
+            self.parser.advance()  # consume semicolon but don't add to node
+        # 6. (KEYWORD(selain-itu) statement)? (Opsional)
         if self.parser.current_token and self.parser.current_token.getValue() == 'selain-itu':
             node.add_child(self._consume(TokenType.KEYWORD, 'selain-itu'))
             node.add_child(self.parse_statement())

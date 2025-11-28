@@ -12,6 +12,7 @@ class DFA:# DFA
         self.startState: Optional[State] = None
         self.finalStates: Set[State] = set()
         self.keywords = set()
+        self.reserved_words_type: Dict[str, TokenType] = {}  # mapping dari keyword ke token type
 
     def addState(self, name: str, isFinal: bool = False, tokenType: Optional[TokenType] = None) -> State: # buat state baru
         state = State(name, isFinal, tokenType)
@@ -34,6 +35,10 @@ class DFA:# DFA
     
     def isKeyword(self, lexeme: str) -> bool:
         return lexeme.lower() in self.keywords
+    
+    def getReservedWordType(self, lexeme: str) -> Optional[TokenType]:
+        # Cari token type dari reserved words mapping
+        return self.reserved_words_type.get(lexeme.lower())
     
     def getTokenType(self, lexeme: str, finalState: State) -> TokenType:
         if finalState.tokenType:
