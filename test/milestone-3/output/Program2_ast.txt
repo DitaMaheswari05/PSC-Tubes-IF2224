@@ -7,10 +7,10 @@ ProgramNode(name: 'logika')
 |   |-- VarDecl('ok') -> tab_index:33, type:boolean, lev:0
 `-- Block
 |   `-- Block -> block_index:1, lev:1
-|   |   |-- Assign('a' := ...)
+|   |   |-- Assign('a' := 10)
 |   |   |   |-- 'a' -> tab_index:30, type:integer
 |   |   |   `-- 10 -> type:integer
-|   |   |-- Assign('b' := ...)
+|   |   |-- Assign('b' := 3)
 |   |   |   |-- 'b' -> tab_index:31, type:integer
 |   |   |   `-- 3 -> type:integer
 |   |   |-- Assign('c' := ...)
@@ -42,7 +42,7 @@ ProgramNode(name: 'logika')
 |   |   |   |   |   `-- BinOp '<'
 |   |   |   |   |   |   |-- 'a' -> tab_index:30, type:integer
 |   |   |   |   |   |   `-- 0 -> type:integer
-|   |   `-- If (...) -> type:void
+|   |   `-- If-Then-Else -> type:void
 |   |   |   |-- condition
 |   |   |   |   `-- 'ok' -> tab_index:33, type:boolean
 |   |   |   |-- then
