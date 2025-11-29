@@ -1,8 +1,8 @@
 === Decorated AST ===
 ProgramNode(name: 'larikprogram')
 |-- Declarations
-|   |-- VarDecl('i') -> tab_index:30, type:integer, lev:0
-|   |-- VarDecl('arr') -> tab_index:31, type:array, lev:0
+|   |-- VarDecl('i') -> tab_index:40, type:integer, lev:0
+|   |-- VarDecl('arr') -> tab_index:41, type:array, lev:0
 `-- Block
 |   `-- Block -> block_index:1, lev:1
 |   |   |-- For 'i' to -> type:void
@@ -12,10 +12,10 @@ ProgramNode(name: 'larikprogram')
 |   |   |   |   `-- 5 -> type:integer
 |   |   |   `-- body
 |   |   |   |   `-- Assign('arr' := ...)
-|   |   |   |   |   |-- 'arr' -> tab_index:31, type:integer
+|   |   |   |   |   |-- 'arr' -> tab_index:41, type:integer
 |   |   |   |   |   `-- BinOp '*' -> type:integer
-|   |   |   |   |   |   |-- 'i' -> tab_index:30, type:integer
-|   |   |   |   |   |   `-- 'i' -> tab_index:30, type:integer
+|   |   |   |   |   |   |-- 'i' -> tab_index:40, type:integer
+|   |   |   |   |   |   `-- 'i' -> tab_index:40, type:integer
 |   |   |-- For 'i' downto -> type:void
 |   |   |   |-- start
 |   |   |   |   `-- 5 -> type:integer
@@ -23,28 +23,28 @@ ProgramNode(name: 'larikprogram')
 |   |   |   |   `-- 1 -> type:integer
 |   |   |   `-- body
 |   |   |   |   `-- Assign('arr' := ...)
-|   |   |   |   |   |-- 'arr' -> tab_index:31, type:integer
+|   |   |   |   |   |-- 'arr' -> tab_index:41, type:integer
 |   |   |   |   |   `-- BinOp '+' -> type:integer
 |   |   |   |   |   |   |-- ArrayAccess[index] -> type:integer
-|   |   |   |   |   |   |   |-- 'arr' -> tab_index:31, type:array
-|   |   |   |   |   |   |   `-- 'i' -> tab_index:30, type:integer
+|   |   |   |   |   |   |   |-- 'arr' -> tab_index:41, type:array
+|   |   |   |   |   |   |   `-- 'i' -> tab_index:40, type:integer
 |   |   |   |   |   |   `-- 1 -> type:integer
 |   |   `-- If-Then-Else -> type:void
 |   |   |   |-- condition
 |   |   |   |   `-- BinOp '<=' -> type:boolean
 |   |   |   |   |   |-- ArrayAccess[index] -> type:integer
-|   |   |   |   |   |   |-- 'arr' -> tab_index:31, type:array
+|   |   |   |   |   |   |-- 'arr' -> tab_index:41, type:array
 |   |   |   |   |   |   `-- 1 -> type:integer
 |   |   |   |   |   `-- ArrayAccess[index] -> type:integer
-|   |   |   |   |   |   |-- 'arr' -> tab_index:31, type:array
+|   |   |   |   |   |   |-- 'arr' -> tab_index:41, type:array
 |   |   |   |   |   |   `-- 2 -> type:integer
 |   |   |   `-- then
 |   |   |   |   `-- Assign('arr' := ...)
-|   |   |   |   |   |-- 'arr' -> tab_index:31, type:integer
+|   |   |   |   |   |-- 'arr' -> tab_index:41, type:integer
 |   |   |   |   |   `-- BinOp '+' -> type:integer
 |   |   |   |   |   |   |-- ArrayAccess[index] -> type:integer
-|   |   |   |   |   |   |   |-- 'arr' -> tab_index:31, type:array
+|   |   |   |   |   |   |   |-- 'arr' -> tab_index:41, type:array
 |   |   |   |   |   |   |   `-- 1 -> type:integer
 |   |   |   |   |   |   `-- ArrayAccess[index] -> type:integer
-|   |   |   |   |   |   |   |-- 'arr' -> tab_index:31, type:array
+|   |   |   |   |   |   |   |-- 'arr' -> tab_index:41, type:array
 |   |   |   |   |   |   |   `-- 2 -> type:integer

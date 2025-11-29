@@ -1,9 +1,0 @@
-=== Decorated AST ===
-ProgramNode(name: 'ErrorTest')
-|-- Declarations
-|   |-- VarDecl('x') -> tab_index:30, type:integer, lev:0
-`-- Block
-|   `-- Block -> block_index:1, lev:1
-|   |   `-- Assign('x' := 5)
-|   |   |   |-- 'x' -> tab_index:30, type:integer
-|   |   |   `-- 5 -> type:integer
