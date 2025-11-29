@@ -13,29 +13,83 @@ class SymbolTable:
         
     def initialize_reserved(self):
         reserved = [
-            ("", ObjectType.CONSTANT, DataType.VOID),
+            ("and", ObjectType.CONSTANT, DataType.VOID),
+            ("array", ObjectType.CONSTANT, DataType.VOID),
+            ("begin", ObjectType.CONSTANT, DataType.VOID),
+            ("case", ObjectType.CONSTANT, DataType.VOID),
+            ("const", ObjectType.CONSTANT, DataType.VOID),
+            ("div", ObjectType.CONSTANT, DataType.VOID),
+            ("downto", ObjectType.CONSTANT, DataType.VOID),
+            ("do", ObjectType.CONSTANT, DataType.VOID),
+            ("else", ObjectType.CONSTANT, DataType.VOID),
+            ("end", ObjectType.CONSTANT, DataType.VOID),
+            ("for", ObjectType.CONSTANT, DataType.VOID),
+            ("function", ObjectType.CONSTANT, DataType.VOID),
+            ("if", ObjectType.CONSTANT, DataType.VOID),
+            ("mod", ObjectType.CONSTANT, DataType.VOID),
+            ("not", ObjectType.CONSTANT, DataType.VOID),
+            ("of", ObjectType.CONSTANT, DataType.VOID),
+            ("or", ObjectType.CONSTANT, DataType.VOID),
+            ("procedure", ObjectType.CONSTANT, DataType.VOID),
+            ("program", ObjectType.CONSTANT, DataType.VOID),
+            ("record", ObjectType.CONSTANT, DataType.VOID),
+            ("repeat", ObjectType.CONSTANT, DataType.VOID),
+            ("string", ObjectType.TYPE, DataType.STRING),
+            ("then", ObjectType.CONSTANT, DataType.VOID),
+            ("to", ObjectType.CONSTANT, DataType.VOID),
+            ("type", ObjectType.CONSTANT, DataType.VOID),
+            ("until", ObjectType.CONSTANT, DataType.VOID),
+            ("var", ObjectType.CONSTANT, DataType.VOID),
+            ("while", ObjectType.CONSTANT, DataType.VOID),
+            ("packed", ObjectType.CONSTANT, DataType.VOID),
+        ]
+
+        
+        # Pastikan ada tepat 29 reserved words (indeks 0-28)
+        assert len(reserved) == 29, f"Reserved words harus 29, tetapi ada {len(reserved)}"
+        
+        # Tambahkan reserved words ke tab
+        for identifier, obj, data_type in reserved:
+            self.tab.append(TabEntry(identifier, obj, data_type, lev=0))
+        
+        # Inisialisasi btab[0] untuk global block
+        self.btab.append(BTabEntry())
+        
+        # Tambahkan tipe data built-in setelah reserved words (indeks 29+)
+        builtin_types = [
             ("integer", ObjectType.TYPE, DataType.INTEGER),
             ("real", ObjectType.TYPE, DataType.REAL),
             ("boolean", ObjectType.TYPE, DataType.BOOLEAN),
             ("char", ObjectType.TYPE, DataType.CHAR),
-            ("string", ObjectType.TYPE, DataType.STRING),
-            ("true", ObjectType.CONSTANT, DataType.BOOLEAN),
-            ("false", ObjectType.CONSTANT, DataType.BOOLEAN),
-            ("writeln", ObjectType.PROCEDURE, DataType.VOID),
-            ("write", ObjectType.PROCEDURE, DataType.VOID),
-            ("readln", ObjectType.PROCEDURE, DataType.VOID),
-            ("read", ObjectType.PROCEDURE, DataType.VOID),
+            # string sudah ada di reserved words (indeks 21)
         ]
         
-        # Tambahkan placeholder hingga indeks 29
-        while len(reserved) < 29:
-            reserved.append(("", ObjectType.CONSTANT, DataType.VOID))
-        
-        for identifier, obj, data_type in reserved:
+        for identifier, obj, data_type in builtin_types:
             self.tab.append(TabEntry(identifier, obj, data_type, lev=0))
         
-        # Inisialisasi global block (btab[0])
-        self.btab.append(BTabEntry())
+        # Tambahkan konstanta boolean setelah tipe data
+        boolean_constants = [
+            ("true", ObjectType.CONSTANT, DataType.BOOLEAN),
+            ("false", ObjectType.CONSTANT, DataType.BOOLEAN),
+        ]
+        
+        for identifier, obj, data_type in builtin_types:
+            link = self.btab[0].last  # Link ke entry sebelumnya di block ini
+            entry = TabEntry(identifier, obj, data_type, ref=0, nrm=1, lev=0, adr=0, link=link)
+            self.tab.append(entry)
+            self.btab[0].last = len(self.tab) - 1  # Update last pointer
+        
+        # Tambahkan konstanta boolean setelah tipe data
+        boolean_constants = [
+            ("true", ObjectType.CONSTANT, DataType.BOOLEAN),
+            ("false", ObjectType.CONSTANT, DataType.BOOLEAN),
+        ]
+        
+        for identifier, obj, data_type in boolean_constants:
+            link = self.btab[0].last  # Link ke entry sebelumnya di block ini
+            entry = TabEntry(identifier, obj, data_type, ref=0, nrm=1, lev=0, adr=0, link=link)
+            self.tab.append(entry)
+            self.btab[0].last = len(self.tab) - 1  # Update last pointer
     
     def enter_block(self):
         self.level += 1
@@ -80,6 +134,19 @@ class SymbolTable:
                 current_index = entry.link
         return None
     
+    def is_builtin_procedure(self, identifier: str) -> bool:
+        # Cek apakah identifier adalah built-in procedure/function.
+        # Built-in: writeln, write, readln, read
+        builtin_names = ['writeln', 'write', 'readln', 'read']
+        return identifier.lower() in builtin_names
+    
+    def get_builtin_procedure_type(self, identifier: str) -> Optional[DataType]:
+        # Procedures mengembalikan VOID.
+        name = identifier.lower()
+        if name in ['writeln', 'write', 'readln', 'read']:
+            return DataType.VOID  # All are procedures
+        return None
+    
     # masukan entri array baru ke atab
     def enter_array(self, xtyp: DataType, etyp: DataType, eref: int, low: int, high: int, elsz: int) -> int :
         size = (high - low + 1) * elsz
@@ -97,32 +164,35 @@ class SymbolTable:
             "string": DataType.STRING
         }
         return type_map.get(keyword.lower())
-    
    
-   
-    # buat debug isi dari tab, atab, btab 
+    # Print tabel tab, atab, btab 
     def print_tables(self):
-        # TAB TABLE
         print("\n" + "=" * 90)
-        print("| SYMBOL TABLE (TAB) - Identifier Table                                             |")
+        print("| SYMBOL TABLE (TAB) - Identifier Table (User-defined only)                         |")
         print("=" * 90)
         print("|{:>4} | {:20} | {:10} | {:7} | {:3} | {:3} | {:3} | {:3} | {:3} |".format(
             "Idx", "Identifier", "Object", "Type", "Ref", "Nrm", "Lev", "Adr", "Link"))
         print("|" + "-" * 88 + "|")
         
+        has_identifiers = False
         for idx, entry in enumerate(self.tab):
-            if idx < 29:  # Skip reserved words
-                continue
-            type_str = str(entry.type.value) if hasattr(entry.type, 'value') else str(entry.type)
-            obj_str = entry.obj.value if hasattr(entry.obj, 'value') else str(entry.obj)
-            print("|{:>4} | {:20} | {:10} | {:7} | {:3} | {:3} | {:3} | {:3} | {:3} |".format(
-                idx, entry.id[:20], obj_str[:10], type_str[:7], entry.ref, entry.nrm, entry.lev, entry.adr, entry.link))
+            if idx >= 29:
+                has_identifiers = True
+                type_str = str(entry.type.value) if hasattr(entry.type, 'value') else str(entry.type)
+                obj_str = entry.obj.value if hasattr(entry.obj, 'value') else str(entry.obj)
+                
+                print("|{:>4} | {:20} | {:10} | {:7} | {:3} | {:3} | {:3} | {:3} | {:3} |".format(
+                    idx, entry.id[:20], obj_str[:10], type_str[:7], entry.ref, entry.nrm, entry.lev, entry.adr, entry.link))
+        
+        if not has_identifiers:
+            print("|{:^88}|".format("No user-defined identifiers"))
         
         print("=" * 90)
+        print("Note: Reserved words (idx 0-28) are hidden. User identifiers start from idx 29.")
         
         # BTAB TABLE
         print("\n" + "=" * 60)
-        print("| BLOCK TABLE (BTAB)                                            |")
+        print("| BLOCK TABLE (BTAB)                                       |")
         print("=" * 60)
         print("|{:>4} | {:7} | {:7} | {:7} | {:7} |".format("Idx", "Last", "Lpar", "Psze", "Vsze"))
         print("|" + "-" * 58 + "|")
