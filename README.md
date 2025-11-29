@@ -1,134 +1,103 @@
-# PASCAL-S Compiler — Milestone 1: Lexical Analysis
+# PASCAL-S Compiler — Milestone 3: Semantic Analysis
 
 ## Deskripsi
-Proyek ini merupakan Milestone 1 dari Tugas Besar IF2224 Teori Bahasa Formal dan Otomata (TBFO), dengan fokus pada **Lexical Analysis** untuk *Pascal-S Compiler*.  
-Tahap ini bertujuan untuk membangun **Lexical Analyzer (Lexer)** yang menggunakan **Deterministic Finite Automata (DFA)** untuk membaca kode sumber Pascal-S (.pas) dan mengubahnya menjadi **daftar token** yang bermakna seperti *keyword*, *identifier*, *operator*, *literal*, dan *delimiter*.
+Milestone ini merupakan bagian ketiga dari Tugas Besar IF2224 Teori Bahasa Formal dan Otomata (TBFO), dengan fokus pada **Semantic Analysis** untuk Pascal-S Compiler.  
+Tahap ini memastikan bahwa program hasil parsing **valid secara semantik** dengan melakukan:
 
-Lexer membaca source code karakter demi karakter dan mengenali pola menggunakan transisi DFA. Implementasi dilakukan menggunakan **Python**, dengan pembacaan file aturan DFA dalam format **JSON (`dfa.json`)**.
+- Type Checking  
+- Scope Checking  
+- Validasi deklarasi variabel, konstanta, prosedur, dan fungsi  
+- Validasi operasi aritmetika, logika, relasional, dan assignment  
+- Validasi parameter prosedur/fungsi  
+- Validasi akses array  
+- Build **Decorated AST**  
+- Build **Symbol Table** (`tab`, `btab`, `atab`)  
 
----
-
-## Struktur Proyek
-
-```
-PSC-Tubes-IF2224/
-│
-├── src/
-│   ├── main.py
-│   ├── run.py
-│   ├── model/
-│   │   ├── Lexer.py
-│   │   ├── Token.py
-│   │   ├── DFA.py
-│   │   ├── State.py
-│   ├── repository/
-│   │   ├── Parser.py
-│   │   ├── JSONParser.py
-│   │   ├── DFAParser.py
-│   │   ├── TokenType.py
-│   ├── view/
-│   │   └── Services.py
-│   └── dfa.json
-│
-├── doc/
-│   ├── Laporan-1-PSC.pdf
-│   ├── Diagram-1-PSC.pdf
-│
-├── test/
-│   └── milestone-1/
-│       ├── input/
-│       └── output/
-│
-└── README.md
-```
+Semantic Analyzer menggunakan pendekatan **L-Attributed Grammar** dan **Visitor Pattern** untuk melakukan traversal parse tree secara top-down.
 
 ---
 
 ## Requirements
 
-### Python dan Library
-- **Python 3.10+**
-- Library bawaan Python (`json`, `enum`, `os`, `typing`, dan sebagainya)
+### Bahasa dan Tools
+- Python
+- Library bawaan Python (enum, typing, dataclasses, dll.)
 
-### File Input
-- Source code Pascal-S (`.pas`)
-- File DFA (`dfa.json`), yang berisi definisi state, transisi, start state, dan final state.
+### Input
+- File pascal-S (.pas)
 
-### File Output
-- Daftar token hasil analisis leksikal, ditampilkan di terminal dan dapat disimpan di file `.txt`.
+### Output
+- Decorated AST (AST dengan anotasi tipe & symbol reference)
+- Symbol Table lengkap
+- Informasi kesalahan semantik
+- Disimpan dalam path milestone-3/output
+
+---
+
+## Penjelasan Class
+
+### `SemanticAnalyzer.py` -> Main
+Entry point utama proses semantic analysis.  
+Mengatur:
+- inisialisasi symbol table  
+- pemanggilan visitor  
+- penggabungan hasil annotate AST  
+- pengecekan error utama  
+
+### **Decorated AST**
+Folder `DecoratedAST/` berisi struktur node AST yang telah diberi anotasi:
+- tipe data  
+- referensi ke symbol table  
+- scope level  
+- informasi tambahan semantik lainnya  
+
+### **Symbol Table**
+Implementasi tiga tabel Pascal-S:
+- `tab` — identifier (konstanta, variabel, prosedur, fungsi, tipe)
+- `btab` — block table (informasi block, parameter, variabel lokal)
+- `atab` — array table (batas, elemen, tipe indeks)
+
+### **Visitor**
+Folder `Visitor/` berisi visitor yang menangani tiap kategori grammar:
+- `DeclarationVisitor`  
+- `ExpressionVisitor`  
+- `StatementVisitor`  
+- `ArrayAccessVisitor`  
+- `ProcFuncVisitor`  
+- `SemanticAnalyzerBase` (abstract visitor)  
+- `SemanticError` (exception khusus semantic error)
 
 ---
 
 ## Cara Instalasi & Penggunaan
 
-### 1️⃣ Clone Repository
+### 1️. Clone Repository
 ```bash
 git clone https://github.com/DitaMaheswari05/PSC-Tubes-IF2224.git
 cd PSC-Tubes-IF2224/src
 ```
 
-### 2️⃣ Jalankan Program
+### 2️. Jalankan Program
 ```bash
-python run.py <path_kode_pascal>
+python run.py -s <path_kode_pascal>
 ```
 **Contoh:**
 ```bash
-python run.py ../test/milestone-1/program1.pas
+python run.py ../test/milestone-3/input/program1.pas
 ```
 
-### 3️⃣ Format Output
-Output token akan muncul di terminal, dengan format:
-```
-KEYWORD(program)
-IDENTIFIER(Hello)
-SEMICOLON(;)
-NUMBER(10)
-ARITHMETIC_OPERATOR(+)
-...
-```
-Kemudian akan tersimpan dalam bentuk `.txt` pada test/milestone-1/output
-
----
-
-## Fitur Utama
-
-- **Implementasi DFA dari file eksternal (JSON)**  
-  DFA digunakan untuk mengenali setiap token berdasarkan transisi antar state.
-- **Mendukung tipe token lengkap** seperti:
-  - `KEYWORD`, `IDENTIFIER`, `NUMBER`, `CHAR_LITERAL`, `STRING_LITERAL`
-  - `ARITHMETIC_OPERATOR`, `RELATIONAL_OPERATOR`, `LOGICAL_OPERATOR`
-  - `ASSIGN_OPERATOR`, `RANGE_OPERATOR`, `DELIMITER`
-- **Menangani kasus khusus:**
-  - Bilangan negatif → `NUMBER(-0.123E10)`
-  - Keyword `true` dan `false`
-  - Range `..` dan assignment `:=`
-- **Mengabaikan komentar dan whitespace**
-
----
-
-## Arsitektur Program
-
-Program diimplementasikan secara **modular OOP** dengan komponen utama:
-
-| Komponen | Deskripsi Singkat |
-|-----------|------------------|
-| `DFA` | Struktur automata dengan kumpulan state dan transisi |
-| `State` | Menyimpan status, transisi, dan tipe token akhir |
-| `Lexer` | Melakukan pembacaan file sumber dan menghasilkan token |
-| `Token` | Representasi setiap unit token dengan tipe dan nilai |
-| `Services` | Lapisan antarmuka yang memanggil lexer dan parser |
-| `Parser` / `DFAParser` | Membaca dan memetakan struktur JSON DFA ke objek Python |
-
----
+### 3️. Format Output
+Output Decorated AST dan Symbol Table akan muncul di terminal
+Kemudian akan tersimpan dalam bentuk `.txt` pada test/milestone-3/output
 
 
-## Identitas & Pembagian Tugas
+## Anggota Kelompok
 
-| NIM | Nama | Pekerjaan |
-|-----|------|------------|
-| 13523125 | **Dita Maheswari** | DFA rules, lexer (sedikit), laporan |
-| 13523127 | **Boye Mangaratua Ginting** | Diagram DFA, laporan |
-| 13523138 | **Samantha Laqueenna Ginting** | Diagram DFA, laporan |
-| 13523158 | **Lukas Raja Agripa** | Lexer, laporan |
+| NIM | Nama |
+|-----|------|
+| 13523125 | **Dita Maheswari** |
+| 13523127 | **Boye Mangaratua Ginting** |
+| 13523138 | **Samantha Laqueenna Ginting** |
+| 13523158 | **Lukas Raja Agripa** |
 
 ---
