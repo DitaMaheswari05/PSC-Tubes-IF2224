@@ -234,60 +234,67 @@ class DeclarationVisitor(SemanticAnalyzerBase):
     
     def visit_function_declaration(self, node: FunctionDeclarationNode) -> FunctionDeclASTNode:
         """Visit function declaration"""
-        # Ambil nama fungsi dari IDENTIFIER dan return type
         func_name = None
         return_type = DataType.VOID
         return_ref = 0
-        param_list = None
-        declarations = []
-        compound_stmt = None
         
         for child in node.children:
             if isinstance(child, Token) and child.tokenType == TokenType.IDENTIFIER:
-                func_name = child.value
-            elif isinstance(child, Token) and child.tokenType == TokenType.KEYWORD:
-                return_type = self.symbol_table.get_type_from_keyword(child.value)
+                if func_name is None:
+                    func_name = child.value
+            
             elif isinstance(child, TypeNode):
-                type_info = self._get_type_info(child)
-                return_type = type_info[0]
-                return_ref = type_info[1]
-            elif isinstance(child, FormalParameterListNode):
+                return_type, return_ref = self._get_type_info(child)
+            
+            elif isinstance(child, Token) and child.tokenType == TokenType.KEYWORD:
+                dtype = self.symbol_table.get_type_from_keyword(child.value)
+                if dtype:
+                    return_type = dtype
+
+        if not func_name:
+            raise SemanticError("Function name not found")
+
+        tab_idx = self.symbol_table.enter_identifier(
+            identifier=func_name,
+            obj=ObjectType.FUNCTION,
+            data_type=return_type,
+            ref=0,
+            nrm=1,
+            adr=0
+        )
+
+        block_idx = self.symbol_table.enter_block()
+        
+        self.symbol_table.tab[tab_idx].ref = block_idx
+        
+        param_list = None
+        declarations = []
+        compound_stmt = None
+
+        for child in node.children:
+            if isinstance(child, FormalParameterListNode):
                 param_list = self.visit_formal_parameter_list(child)
+            
             elif isinstance(child, DeclarationPartNode):
                 declarations = self.visit_declaration_part(child)
+            
             elif isinstance(child, CompoundStatementNode):
+                # Import lokal untuk hindari circular import
                 from Semantic.Visitor.StatementVisitor import StatementVisitor
                 stmt_visitor = StatementVisitor()
                 stmt_visitor.symbol_table = self.symbol_table
+                stmt_visitor.errors = self.errors
                 compound_stmt = stmt_visitor.visit_compound_statement(child)
+
         
-        if not func_name:
-            raise SemanticError("Function name not found")
-        
-        # Check if already declared
-        current_block = self.symbol_table.btab[self.symbol_table.display[self.symbol_table.level]]
-        current_idx = current_block.last
-        
-        while current_idx != 0:
-            entry = self.symbol_table.tab[current_idx]
-            if entry.id.lower() == func_name.lower():
-                raise RedeclarationError(f"Function '{func_name}' already declared in current scope")
-            current_idx = entry.link
-        
-        # Create new block for function
-        block_idx = self.symbol_table.enter_block()
-        
-        # Register function in symbol table
-        tab_idx = self.symbol_table.enter_identifier(
-            func_name,
-            ObjectType.FUNCTION,
-            return_type,
-            return_ref
-        )
-        
-        # Create AST node
+        # Create AST Node
         func_ast = FunctionDeclASTNode(func_name, return_type)
-        func_ast.annotate(data_type=return_type, tab_index=tab_idx, block_index=block_idx, scope_level=self.symbol_table.level)
+        func_ast.annotate(
+            data_type=return_type, 
+            tab_index=tab_idx, 
+            block_index=block_idx, 
+            scope_level=self.symbol_table.level
+        )
         
         # Exit block
         self.symbol_table.exit_block()

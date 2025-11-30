@@ -54,18 +54,17 @@ class SemanticAnalyzer(SemanticAnalyzerBase):
         program_name = ""
         for child in node.children:
             if isinstance(child, ProgramHeaderNode):
-                # Extract program name dari program header
                 for header_child in child.children:
                     if isinstance(header_child, Token) and header_child.tokenType == TokenType.IDENTIFIER:
                         program_name = header_child.value
                         break
         
-        # Masukkan nama program ke symbol table
+        # Masukkan nama program ke symbol table (Global Entry)
         program_idx = self.symbol_table.enter_identifier(
             identifier=program_name,
             obj=ObjectType.PROGRAM,
             data_type=DataType.VOID,
-            ref=0,  # ref ke btab[0] untuk global block
+            ref=0,  # ref ke btab[0]
             nrm=1,
             adr=0
         )
@@ -92,25 +91,20 @@ class SemanticAnalyzer(SemanticAnalyzerBase):
             
             # Process declaration part
             if isinstance(child, DeclarationPartNode):
-                # Visit semua deklarasi (const, type, var, procedure, function)
+                # Visit deklarasi. Ini akan mengisi Symbol Table di Level 0 (Global)
                 declarations = self.declaration_visitor.visit_declaration_part(child)
                 program_ast.declarations.extend(declarations)
             
             # Process compound statement (main block)
             elif isinstance(child, CompoundStatementNode):
-                # Enter block untuk main program
-                main_block_idx = self.symbol_table.enter_block()
-                
                 # Visit compound statement
                 block_ast = self.statement_visitor.visit_compound_statement(child)
+                
                 block_ast.annotate(
-                    block_index=main_block_idx,
-                    scope_level=self.symbol_table.level
+                    block_index=0, # Selalu 0 untuk Global Block
+                    scope_level=self.symbol_table.level # Seharusnya 0
                 )
                 program_ast.block = block_ast
-                
-                # Exit block
-                self.symbol_table.exit_block()
         
         return program_ast
     
