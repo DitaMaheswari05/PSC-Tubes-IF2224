@@ -15,5 +15,5 @@ ProgramNode(name: 'TestArray')
 │    │    │    │    └─ value BinOp '*' -> type:integer
 │    │    │    │    │    ├─ 'i' -> tab_index:31, type:integer
 │    │    │    │    │    └─ 2 -> type:integer
-│    └─ writeln(args: 1) -> tab_index:32, predefined
+│    └─ writeln(args: 1) -> tab_index:32
 │    │    └─ "'Done'" -> type:string

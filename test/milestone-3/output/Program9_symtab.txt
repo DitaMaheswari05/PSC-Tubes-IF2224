@@ -5,9 +5,9 @@
 | Idx | Identifier           | Object     | Type    | Ref | Nrm | Lev | Adr | Link |
 |----------------------------------------------------------------------------------------|
 |  29 | TestArray            | program    | 0       |   0 |   1 |   0 |   0 |   0 |
-|  30 | numbers              | variable   | 6       |   0 |   1 |   0 |   0 |  31 |
-|  31 | i                    | variable   | 1       |   0 |   1 |   0 |   0 |   0 |
-|  32 | writeln              | procedure  | 0       |   0 |   1 |   0 |   0 |   0 |
+|  30 | numbers              | variable   | 6       |   0 |   1 |   0 |   0 |   0 |
+|  31 | i                    | variable   | 1       |   0 |   1 |   0 |   0 |  30 |
+|  32 | writeln (predefined) | procedure  | 0       |   0 |   1 |   0 |   0 |   0 |
 ==========================================================================================
 Note: Reserved words (idx 0–28), built-in types, dan konstanta built-in tidak ditampilkan.
 

@@ -5,10 +5,10 @@
 | Idx | Identifier           | Object     | Type    | Ref | Nrm | Lev | Adr | Link |
 |----------------------------------------------------------------------------------------|
 |  29 | logika               | program    | 0       |   0 |   1 |   0 |   0 |   0 |
-|  30 | a                    | variable   | 1       |   0 |   1 |   0 |   0 |  31 |
-|  31 | b                    | variable   | 1       |   0 |   1 |   0 |   0 |  32 |
-|  32 | c                    | variable   | 1       |   0 |   1 |   0 |   0 |  33 |
-|  33 | ok                   | variable   | 3       |   0 |   1 |   0 |   0 |   0 |
+|  30 | a                    | variable   | 1       |   0 |   1 |   0 |   0 |   0 |
+|  31 | b                    | variable   | 1       |   0 |   1 |   0 |   0 |  30 |
+|  32 | c                    | variable   | 1       |   0 |   1 |   0 |   0 |  31 |
+|  33 | ok                   | variable   | 3       |   0 |   1 |   0 |   0 |  32 |
 ==========================================================================================
 Note: Reserved words (idx 0–28), built-in types, dan konstanta built-in tidak ditampilkan.
 

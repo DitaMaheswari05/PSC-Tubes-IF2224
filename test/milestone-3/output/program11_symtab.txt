@@ -5,11 +5,11 @@
 | Idx | Identifier           | Object     | Type    | Ref | Nrm | Lev | Adr | Link |
 |----------------------------------------------------------------------------------------|
 |  29 | TestScope            | program    | 0       |   0 |   1 |   0 |   0 |   0 |
-|  30 | x                    | variable   | 1       |   0 |   1 |   0 |   0 |  31 |
-|  31 | y                    | variable   | 1       |   0 |   1 |   0 |   0 |  32 |
-|  32 | cekLokal             | procedure  | 0       |   1 |   1 |   0 |   0 |   0 |
+|  30 | x                    | variable   | 1       |   0 |   1 |   0 |   0 |   0 |
+|  31 | y                    | variable   | 1       |   0 |   1 |   0 |   0 |  30 |
+|  32 | cekLokal             | procedure  | 0       |   1 |   1 |   0 |   0 |  31 |
 |  33 | x                    | variable   | 3       |   0 |   1 |   1 |   0 |   0 |
-|  34 | writeln              | procedure  | 0       |   0 |   1 |   0 |   0 |   0 |
+|  34 | writeln (predefined) | procedure  | 0       |   0 |   1 |   0 |   0 |   0 |
 ==========================================================================================
 Note: Reserved words (idx 0–28), built-in types, dan konstanta built-in tidak ditampilkan.
 

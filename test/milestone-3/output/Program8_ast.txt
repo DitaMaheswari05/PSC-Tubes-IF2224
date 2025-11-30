@@ -20,6 +20,6 @@ ProgramNode(name: 'TestIf')
 │    │    │    └─ Assign('y' := 0) -> type:void
 │    │    │    │    ├─ target 'y' -> tab_index:31, type:integer
 │    │    │    │    └─ value 0 -> type:integer
-│    └─ writeln(args: 2) -> tab_index:32, predefined
+│    └─ writeln(args: 2) -> tab_index:32
 │    │    ├─ "'Y = '" -> type:string
 │    │    └─ 'y' -> tab_index:31, type:integer

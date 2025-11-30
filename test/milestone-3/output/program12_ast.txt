@@ -19,8 +19,6 @@ ProgramNode(name: 'TestTipeData')
 │    │    └─ value BinOp '+' -> type:real
 │    │    │    ├─ 'angka' -> tab_index:30, type:integer
 │    │    │    └─ 'pecahan' -> tab_index:31, type:real
-│    └─ writeln(args: 2) -> tab_index:33, predefined
+│    └─ writeln(args: 2) -> tab_index:33
 │    │    ├─ "'Hasil = '" -> type:string
 │    │    └─ 'hasil' -> tab_index:32, type:real
-
-

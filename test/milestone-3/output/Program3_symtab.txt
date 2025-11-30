@@ -5,8 +5,8 @@
 | Idx | Identifier           | Object     | Type    | Ref | Nrm | Lev | Adr | Link |
 |----------------------------------------------------------------------------------------|
 |  29 | larikprogram         | program    | 0       |   0 |   1 |   0 |   0 |   0 |
-|  30 | i                    | variable   | 1       |   0 |   1 |   0 |   0 |  31 |
-|  31 | arr                  | variable   | 6       |   0 |   1 |   0 |   0 |   0 |
+|  30 | i                    | variable   | 1       |   0 |   1 |   0 |   0 |   0 |
+|  31 | arr                  | variable   | 6       |   0 |   1 |   0 |   0 |  30 |
 ==========================================================================================
 Note: Reserved words (idx 0–28), built-in types, dan konstanta built-in tidak ditampilkan.
 

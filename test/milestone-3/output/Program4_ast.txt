@@ -18,33 +18,33 @@ ProgramNode(name: 'yangpentingdesimaldah')
 │    ├─ Assign('biasa' := 123.456) -> type:void
 │    │    ├─ target 'biasa' -> tab_index:33, type:real
 │    │    └─ value 123.456 -> type:real
-│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    ├─ writeln(args: 1) -> tab_index:34
 │    │    └─ 0.1213123 -> type:real
-│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    ├─ writeln(args: 1) -> tab_index:34
 │    │    └─ 1.23e+21 -> type:real
-│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    ├─ writeln(args: 1) -> tab_index:34
 │    │    └─ -1.24e-11 -> type:real
-│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    ├─ writeln(args: 1) -> tab_index:34
 │    │    └─ 123.456 -> type:real
-│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    ├─ writeln(args: 1) -> tab_index:34
 │    │    └─ ""Dah pIndah"" -> type:string
-│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    ├─ writeln(args: 1) -> tab_index:34
 │    │    └─ ""Dah pIndah"" -> type:string
-│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    ├─ writeln(args: 1) -> tab_index:34
 │    │    └─ ""Dah pIndah"" -> type:string
-│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    ├─ writeln(args: 1) -> tab_index:34
 │    │    └─ ""Dah pIndah"" -> type:string
-│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    ├─ writeln(args: 1) -> tab_index:34
 │    │    └─ ""Dah pIndah"" -> type:string
-│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    ├─ writeln(args: 1) -> tab_index:34
 │    │    └─ BinOp '-' -> type:real
 │    │    │    ├─ 'iniScientific' -> tab_index:31, type:real
 │    │    │    └─ 'samaNeg' -> tab_index:32, type:real
-│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    ├─ writeln(args: 1) -> tab_index:34
 │    │    └─ BinOp '-' -> type:real
 │    │    │    ├─ -1.24e-11 -> type:real
 │    │    │    └─ -1.24e-11 -> type:real
-│    └─ writeln(args: 1) -> tab_index:34, predefined
+│    └─ writeln(args: 1) -> tab_index:34
 │    │    └─ BinOp 'bagi' -> type:integer
 │    │    │    ├─ 'biasa' -> tab_index:33, type:real
 │    │    │    └─ 2 -> type:integer

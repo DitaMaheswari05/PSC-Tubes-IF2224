@@ -12,6 +12,6 @@ ProgramNode(name: 'Hello')
 │    │    └─ value BinOp '+' -> type:integer
 │    │    │    ├─ 'a' -> tab_index:30, type:integer
 │    │    │    └─ 10 -> type:integer
-│    └─ writeln(args: 2) -> tab_index:32, predefined
+│    └─ writeln(args: 2) -> tab_index:32
 │    │    ├─ "'Result = '" -> type:string
 │    │    └─ 'b' -> tab_index:31, type:integer

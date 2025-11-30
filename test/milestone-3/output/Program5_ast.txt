@@ -6,6 +6,6 @@ ProgramNode(name: 'bebas')
 │    ├─ Assign('ch' := 'A') -> type:void
 │    │    ├─ target 'ch' -> tab_index:30, type:char
 │    │    └─ value 'A' -> type:char
-│    └─ writeln(args: 2) -> tab_index:31, predefined
+│    └─ writeln(args: 2) -> tab_index:31
 │    │    ├─ "'Dont panic: value = '" -> type:string
 │    │    └─ 'ch' -> tab_index:30, type:char

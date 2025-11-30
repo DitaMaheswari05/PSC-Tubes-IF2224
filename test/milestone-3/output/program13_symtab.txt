@@ -5,10 +5,10 @@
 | Idx | Identifier           | Object     | Type    | Ref | Nrm | Lev | Adr | Link |
 |----------------------------------------------------------------------------------------|
 |  29 | TestFungsiRekursif   | program    | 0       |   0 |   1 |   0 |   0 |   0 |
-|  30 | hasil                | variable   | 1       |   0 |   1 |   0 |   0 |  31 |
-|  31 | faktorial            | function   | 1       |   1 |   1 |   0 |   0 |   0 |
+|  30 | hasil                | variable   | 1       |   0 |   1 |   0 |   0 |   0 |
+|  31 | faktorial            | function   | 1       |   1 |   1 |   0 |   0 |  30 |
 |  32 | n                    | parameter  | 1       |   0 |   1 |   1 |   0 |   0 |
-|  33 | writeln              | procedure  | 0       |   0 |   1 |   0 |   0 |   0 |
+|  33 | writeln (predefined) | procedure  | 0       |   0 |   1 |   0 |   0 |   0 |
 ==========================================================================================
 Note: Reserved words (idx 0–28), built-in types, dan konstanta built-in tidak ditampilkan.
 
