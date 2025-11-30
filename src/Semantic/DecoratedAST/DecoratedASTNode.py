@@ -349,15 +349,20 @@ class ProcCallASTNode(DecoratedASTNode):
         super().__init__("ProcCall")
         self.name = name
         self.args = args
+        self.is_predefined = False  # Flag untuk menandai predefined procedure
     
     def to_string(self, indent: int = 0, is_last: bool = True) -> str:
         prefix = self._get_prefix(indent, is_last)
         arg_count = len(self.args) if self.args else 0
         
-        # Check if it's a predefined procedure
-        ann_str = " -> predefined"
+        # Build annotations
+        annotations = []
         if self.tab_index is not None:
-            ann_str = f" -> tab_index:{self.tab_index}, predefined"
+            annotations.append(f"tab_index:{self.tab_index}")
+        if self.is_predefined:
+            annotations.append("predefined")
+        
+        ann_str = " -> " + ", ".join(annotations) if annotations else ""
         
         result = f"{prefix}{self.name}(args: {arg_count}){ann_str}\n"
         
