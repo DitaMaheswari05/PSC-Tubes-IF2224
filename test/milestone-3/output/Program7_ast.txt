@@ -7,5 +7,5 @@ ProgramNode(name: 'TestProcedure')
 │    ├─ Assign('x' := 42) -> type:void
 │    │    ├─ target 'x' -> tab_index:30, type:integer
 │    │    └─ value 42 -> type:integer
-│    └─ printNumber(args: 1) -> tab_index:31, predefined
+│    └─ printNumber(args: 1) -> tab_index:31
 │    │    └─ 'x' -> tab_index:30, type:integer
