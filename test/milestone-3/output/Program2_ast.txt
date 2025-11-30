@@ -1,59 +1,58 @@
 === Decorated AST ===
 ProgramNode(name: 'logika')
-|-- Declarations
-|   |-- VarDecl('a') -> tab_index:40, type:integer, lev:0
-|   |-- VarDecl('b') -> tab_index:41, type:integer, lev:0
-|   |-- VarDecl('c') -> tab_index:42, type:integer, lev:0
-|   |-- VarDecl('ok') -> tab_index:43, type:boolean, lev:0
-`-- Block
-|   `-- Block -> block_index:1, lev:1
-|   |   |-- Assign('a' := 10)
-|   |   |   |-- 'a' -> tab_index:40, type:integer
-|   |   |   `-- 10 -> type:integer
-|   |   |-- Assign('b' := 3)
-|   |   |   |-- 'b' -> tab_index:41, type:integer
-|   |   |   `-- 3 -> type:integer
-|   |   |-- Assign('c' := ...)
-|   |   |   |-- 'c' -> tab_index:42, type:integer
-|   |   |   `-- BinOp '-' -> type:integer
-|   |   |   |   |-- BinOp '+' -> type:integer
-|   |   |   |   |   |-- BinOp 'bagi' -> type:integer
-|   |   |   |   |   |   |-- 'a' -> tab_index:40, type:integer
-|   |   |   |   |   |   `-- 'b' -> tab_index:41, type:integer
-|   |   |   |   |   `-- BinOp 'mod' -> type:integer
-|   |   |   |   |   |   |-- 'a' -> tab_index:40, type:integer
-|   |   |   |   |   |   `-- 'b' -> tab_index:41, type:integer
-|   |   |   |   `-- BinOp '*' -> type:integer
-|   |   |   |   |   |-- BinOp '-' -> type:integer
-|   |   |   |   |   |   |-- 'a' -> tab_index:40, type:integer
-|   |   |   |   |   |   `-- 'b' -> tab_index:41, type:integer
-|   |   |   |   |   `-- 2 -> type:integer
-|   |   |-- Assign('ok' := ...)
-|   |   |   |-- 'ok' -> tab_index:43, type:boolean
-|   |   |   `-- BinOp 'atau' -> type:boolean
-|   |   |   |   |-- BinOp 'dan' -> type:boolean
-|   |   |   |   |   |-- BinOp '>='
-|   |   |   |   |   |   |-- 'a' -> tab_index:40, type:integer
-|   |   |   |   |   |   `-- 'b' -> tab_index:41, type:integer
-|   |   |   |   |   `-- BinOp '<>'
-|   |   |   |   |   |   |-- 'b' -> tab_index:41, type:integer
-|   |   |   |   |   |   `-- 0 -> type:integer
-|   |   |   |   `-- UnaryOp 'tidak' -> type:boolean
-|   |   |   |   |   `-- BinOp '<'
-|   |   |   |   |   |   |-- 'a' -> tab_index:40, type:integer
-|   |   |   |   |   |   `-- 0 -> type:integer
-|   |   `-- If-Then-Else -> type:void
-|   |   |   |-- condition
-|   |   |   |   `-- 'ok' -> tab_index:43, type:boolean
-|   |   |   |-- then
-|   |   |   |   `-- Assign('c' := ...)
-|   |   |   |   |   |-- 'c' -> tab_index:42, type:integer
-|   |   |   |   |   `-- BinOp '+' -> type:integer
-|   |   |   |   |   |   |-- 'c' -> tab_index:42, type:integer
-|   |   |   |   |   |   `-- 1 -> type:integer
-|   |   |   `-- else
-|   |   |   |   `-- Assign('c' := ...)
-|   |   |   |   |   |-- 'c' -> tab_index:42, type:integer
-|   |   |   |   |   `-- BinOp '-' -> type:integer
-|   |   |   |   |   |   |-- 'c' -> tab_index:42, type:integer
-|   |   |   |   |   |   `-- 1 -> type:integer
+ ├─ Declarations
+│    ├─ VarDecl('a') -> tab_index:30, type:integer, lev:0
+│    ├─ VarDecl('b') -> tab_index:31, type:integer, lev:0
+│    ├─ VarDecl('c') -> tab_index:32, type:integer, lev:0
+│    ├─ VarDecl('ok') -> tab_index:33, type:boolean, lev:0
+ └─ Block -> block_index:1, lev:1
+│    ├─ Assign('a' := 10) -> type:void
+│    │    ├─ target 'a' -> tab_index:30, type:integer
+│    │    └─ value 10 -> type:integer
+│    ├─ Assign('b' := 3) -> type:void
+│    │    ├─ target 'b' -> tab_index:31, type:integer
+│    │    └─ value 3 -> type:integer
+│    ├─ Assign('c' := abagib+amodb-a-b*2) -> type:void
+│    │    ├─ target 'c' -> tab_index:32, type:integer
+│    │    └─ value BinOp '-' -> type:integer
+│    │    │    ├─ BinOp '+' -> type:integer
+│    │    │    │    ├─ BinOp 'bagi' -> type:integer
+│    │    │    │    │    ├─ 'a' -> tab_index:30, type:integer
+│    │    │    │    │    └─ 'b' -> tab_index:31, type:integer
+│    │    │    │    └─ BinOp 'mod' -> type:integer
+│    │    │    │    │    ├─ 'a' -> tab_index:30, type:integer
+│    │    │    │    │    └─ 'b' -> tab_index:31, type:integer
+│    │    │    └─ BinOp '*' -> type:integer
+│    │    │    │    ├─ BinOp '-' -> type:integer
+│    │    │    │    │    ├─ 'a' -> tab_index:30, type:integer
+│    │    │    │    │    └─ 'b' -> tab_index:31, type:integer
+│    │    │    │    └─ 2 -> type:integer
+│    ├─ Assign('ok' := a>=bdanb<>0atau...) -> type:void
+│    │    ├─ target 'ok' -> tab_index:33, type:boolean
+│    │    └─ value BinOp 'atau' -> type:boolean
+│    │    │    ├─ BinOp 'dan' -> type:boolean
+│    │    │    │    ├─ BinOp '>='
+│    │    │    │    │    ├─ 'a' -> tab_index:30, type:integer
+│    │    │    │    │    └─ 'b' -> tab_index:31, type:integer
+│    │    │    │    └─ BinOp '<>'
+│    │    │    │    │    ├─ 'b' -> tab_index:31, type:integer
+│    │    │    │    │    └─ 0 -> type:integer
+│    │    │    └─ UnaryOp 'tidak' -> type:boolean
+│    │    │    │    └─ BinOp '<'
+│    │    │    │    │    ├─ 'a' -> tab_index:30, type:integer
+│    │    │    │    │    └─ 0 -> type:integer
+│    └─ If-Then-Else -> type:void
+│    │    ├─ condition
+│    │    │    └─ 'ok' -> tab_index:33, type:boolean
+│    │    ├─ then
+│    │    │    └─ Assign('c' := c+1) -> type:void
+│    │    │    │    ├─ target 'c' -> tab_index:32, type:integer
+│    │    │    │    └─ value BinOp '+' -> type:integer
+│    │    │    │    │    ├─ 'c' -> tab_index:32, type:integer
+│    │    │    │    │    └─ 1 -> type:integer
+│    │    └─ else
+│    │    │    └─ Assign('c' := c-1) -> type:void
+│    │    │    │    ├─ target 'c' -> tab_index:32, type:integer
+│    │    │    │    └─ value BinOp '-' -> type:integer
+│    │    │    │    │    ├─ 'c' -> tab_index:32, type:integer
+│    │    │    │    │    └─ 1 -> type:integer

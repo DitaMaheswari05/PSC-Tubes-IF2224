@@ -1,18 +1,17 @@
 === Decorated AST ===
 ProgramNode(name: 'Hello')
-|-- Declarations
-|   |-- VarDecl('a') -> tab_index:40, type:integer, lev:0
-|   |-- VarDecl('b') -> tab_index:41, type:integer, lev:0
-`-- Block
-|   `-- Block -> block_index:1, lev:1
-|   |   |-- Assign('a' := 5)
-|   |   |   |-- 'a' -> tab_index:40, type:integer
-|   |   |   `-- 5 -> type:integer
-|   |   |-- Assign('b' := ...)
-|   |   |   |-- 'b' -> tab_index:41, type:integer
-|   |   |   `-- BinOp '+' -> type:integer
-|   |   |   |   |-- 'a' -> tab_index:40, type:integer
-|   |   |   |   `-- 10 -> type:integer
-|   |   `-- writeln(args: 2) -> predefined
-|   |   |   |-- "'Result = '" -> type:string
-|   |   |   `-- 'b' -> tab_index:41, type:integer
+ ├─ Declarations
+│    ├─ VarDecl('a') -> tab_index:30, type:integer, lev:0
+│    ├─ VarDecl('b') -> tab_index:31, type:integer, lev:0
+ └─ Block -> block_index:1, lev:1
+│    ├─ Assign('a' := 5) -> type:void
+│    │    ├─ target 'a' -> tab_index:30, type:integer
+│    │    └─ value 5 -> type:integer
+│    ├─ Assign('b' := a+10) -> type:void
+│    │    ├─ target 'b' -> tab_index:31, type:integer
+│    │    └─ value BinOp '+' -> type:integer
+│    │    │    ├─ 'a' -> tab_index:30, type:integer
+│    │    │    └─ 10 -> type:integer
+│    └─ writeln(args: 2) -> tab_index:32, predefined
+│    │    ├─ "'Result = '" -> type:string
+│    │    └─ 'b' -> tab_index:31, type:integer

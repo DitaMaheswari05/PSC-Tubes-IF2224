@@ -1,51 +1,50 @@
 === Decorated AST ===
 ProgramNode(name: 'yangpentingdesimaldah')
-|-- Declarations
-|   |-- VarDecl('iniDesimal') -> tab_index:40, type:real, lev:0
-|   |-- VarDecl('iniScientific') -> tab_index:41, type:real, lev:0
-|   |-- VarDecl('samaNeg') -> tab_index:42, type:real, lev:0
-|   |-- VarDecl('biasa') -> tab_index:43, type:real, lev:0
-`-- Block
-|   `-- Block -> block_index:1, lev:1
-|   |   |-- Assign('iniDesimal' := 0.1213123)
-|   |   |   |-- 'iniDesimal' -> tab_index:40, type:real
-|   |   |   `-- 0.1213123 -> type:real
-|   |   |-- Assign('iniScientific' := 1.23e+21)
-|   |   |   |-- 'iniScientific' -> tab_index:41, type:real
-|   |   |   `-- 1.23e+21 -> type:real
-|   |   |-- Assign('samaNeg' := -1.24e-11)
-|   |   |   |-- 'samaNeg' -> tab_index:42, type:real
-|   |   |   `-- -1.24e-11 -> type:real
-|   |   |-- Assign('biasa' := 123.456)
-|   |   |   |-- 'biasa' -> tab_index:43, type:real
-|   |   |   `-- 123.456 -> type:real
-|   |   |-- writeln(args: 1) -> predefined
-|   |   |   `-- 0.1213123 -> type:real
-|   |   |-- writeln(args: 1) -> predefined
-|   |   |   `-- 1.23e+21 -> type:real
-|   |   |-- writeln(args: 1) -> predefined
-|   |   |   `-- -1.24e-11 -> type:real
-|   |   |-- writeln(args: 1) -> predefined
-|   |   |   `-- 123.456 -> type:real
-|   |   |-- writeln(args: 1) -> predefined
-|   |   |   `-- ""Dah pIndah"" -> type:string
-|   |   |-- writeln(args: 1) -> predefined
-|   |   |   `-- ""Dah pIndah"" -> type:string
-|   |   |-- writeln(args: 1) -> predefined
-|   |   |   `-- ""Dah pIndah"" -> type:string
-|   |   |-- writeln(args: 1) -> predefined
-|   |   |   `-- ""Dah pIndah"" -> type:string
-|   |   |-- writeln(args: 1) -> predefined
-|   |   |   `-- ""Dah pIndah"" -> type:string
-|   |   |-- writeln(args: 1) -> predefined
-|   |   |   `-- BinOp '-' -> type:real
-|   |   |   |   |-- 'iniScientific' -> tab_index:41, type:real
-|   |   |   |   `-- 'samaNeg' -> tab_index:42, type:real
-|   |   |-- writeln(args: 1) -> predefined
-|   |   |   `-- BinOp '-' -> type:real
-|   |   |   |   |-- -1.24e-11 -> type:real
-|   |   |   |   `-- -1.24e-11 -> type:real
-|   |   `-- writeln(args: 1) -> predefined
-|   |   |   `-- BinOp 'bagi' -> type:integer
-|   |   |   |   |-- 'biasa' -> tab_index:43, type:real
-|   |   |   |   `-- 2 -> type:integer
+ ├─ Declarations
+│    ├─ VarDecl('iniDesimal') -> tab_index:30, type:real, lev:0
+│    ├─ VarDecl('iniScientific') -> tab_index:31, type:real, lev:0
+│    ├─ VarDecl('samaNeg') -> tab_index:32, type:real, lev:0
+│    ├─ VarDecl('biasa') -> tab_index:33, type:real, lev:0
+ └─ Block -> block_index:1, lev:1
+│    ├─ Assign('iniDesimal' := 0.1213123) -> type:void
+│    │    ├─ target 'iniDesimal' -> tab_index:30, type:real
+│    │    └─ value 0.1213123 -> type:real
+│    ├─ Assign('iniScientific' := 1.23e+21) -> type:void
+│    │    ├─ target 'iniScientific' -> tab_index:31, type:real
+│    │    └─ value 1.23e+21 -> type:real
+│    ├─ Assign('samaNeg' := -1.24e-11) -> type:void
+│    │    ├─ target 'samaNeg' -> tab_index:32, type:real
+│    │    └─ value -1.24e-11 -> type:real
+│    ├─ Assign('biasa' := 123.456) -> type:void
+│    │    ├─ target 'biasa' -> tab_index:33, type:real
+│    │    └─ value 123.456 -> type:real
+│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    │    └─ 0.1213123 -> type:real
+│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    │    └─ 1.23e+21 -> type:real
+│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    │    └─ -1.24e-11 -> type:real
+│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    │    └─ 123.456 -> type:real
+│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    │    └─ ""Dah pIndah"" -> type:string
+│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    │    └─ ""Dah pIndah"" -> type:string
+│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    │    └─ ""Dah pIndah"" -> type:string
+│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    │    └─ ""Dah pIndah"" -> type:string
+│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    │    └─ ""Dah pIndah"" -> type:string
+│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    │    └─ BinOp '-' -> type:real
+│    │    │    ├─ 'iniScientific' -> tab_index:31, type:real
+│    │    │    └─ 'samaNeg' -> tab_index:32, type:real
+│    ├─ writeln(args: 1) -> tab_index:34, predefined
+│    │    └─ BinOp '-' -> type:real
+│    │    │    ├─ -1.24e-11 -> type:real
+│    │    │    └─ -1.24e-11 -> type:real
+│    └─ writeln(args: 1) -> tab_index:34, predefined
+│    │    └─ BinOp 'bagi' -> type:integer
+│    │    │    ├─ 'biasa' -> tab_index:33, type:real
+│    │    │    └─ 2 -> type:integer

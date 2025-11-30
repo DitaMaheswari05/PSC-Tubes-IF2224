@@ -1,12 +1,11 @@
 === Decorated AST ===
 ProgramNode(name: 'TestProcedure')
-|-- Declarations
-|   |-- VarDecl('x') -> tab_index:40, type:integer, lev:0
-|   |-- ProcedureDecl -> 'printNumber', type:void, tab_index:41, block_index:1, lev:1
-`-- Block
-|   `-- Block -> block_index:2, lev:1
-|   |   |-- Assign('x' := 42)
-|   |   |   |-- 'x' -> tab_index:40, type:integer
-|   |   |   `-- 42 -> type:integer
-|   |   `-- writeln(args: 1) -> predefined
-|   |   |   `-- 'x' -> tab_index:40, type:integer
+ ├─ Declarations
+│    ├─ VarDecl('x') -> tab_index:30, type:integer, lev:0
+│    ├─ ProcedureDecl -> 'printNumber', type:void, tab_index:31, block_index:1, lev:1
+ └─ Block -> block_index:2, lev:1
+│    ├─ Assign('x' := 42) -> type:void
+│    │    ├─ target 'x' -> tab_index:30, type:integer
+│    │    └─ value 42 -> type:integer
+│    └─ printNumber(args: 1) -> tab_index:31, predefined
+│    │    └─ 'x' -> tab_index:30, type:integer

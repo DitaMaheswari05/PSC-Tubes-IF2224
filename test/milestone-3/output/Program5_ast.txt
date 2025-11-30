@@ -1,12 +1,11 @@
 === Decorated AST ===
 ProgramNode(name: 'bebas')
-|-- Declarations
-|   |-- VarDecl('ch') -> tab_index:40, type:char, lev:0
-`-- Block
-|   `-- Block -> block_index:1, lev:1
-|   |   |-- Assign('ch' := 'A')
-|   |   |   |-- 'ch' -> tab_index:40, type:char
-|   |   |   `-- ''A'' -> type:char
-|   |   `-- writeln(args: 2) -> predefined
-|   |   |   |-- "'Dont panic: value = '" -> type:string
-|   |   |   `-- 'ch' -> tab_index:40, type:char
+ ├─ Declarations
+│    ├─ VarDecl('ch') -> tab_index:30, type:char, lev:0
+ └─ Block -> block_index:1, lev:1
+│    ├─ Assign('ch' := 'A') -> type:void
+│    │    ├─ target 'ch' -> tab_index:30, type:char
+│    │    └─ value 'A' -> type:char
+│    └─ writeln(args: 2) -> tab_index:31, predefined
+│    │    ├─ "'Dont panic: value = '" -> type:string
+│    │    └─ 'ch' -> tab_index:30, type:char
