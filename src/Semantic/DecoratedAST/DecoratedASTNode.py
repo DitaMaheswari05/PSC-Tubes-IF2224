@@ -29,20 +29,20 @@ class DecoratedASTNode(ASTNode):
         return f"{prefix}{self.node_type}{annotations}\n"
     
     def _get_prefix(self, indent: int, is_last: bool) -> str:
-        """Generate proper tree line prefix using ASCII characters"""
+        """Generate proper tree line prefix using Unicode box-drawing characters"""
         if indent == 0:
             return ""
         
         lines = []
         for i in range(indent - 1):
-            lines.append("|   ")
+            lines.append("│   ")
         
         if is_last:
-            lines.append("`-- ")
+            lines.append("└─ ")
         else:
-            lines.append("|-- ")
+            lines.append("├─ ")
         
-        return "".join(lines)
+        return " ".join(lines)
     
     def _get_annotations(self) -> str:
         """Get annotation string with type, tab_index, lev, etc."""
@@ -75,15 +75,27 @@ class ProgramASTNode(DecoratedASTNode):
         
         # Declarations section
         if self.declarations:
-            result += self._get_prefix(1, False) + "Declarations\n"
+            result += " ├─ Declarations\n"
             for i, decl in enumerate(self.declarations):
                 is_last_decl = (i == len(self.declarations) - 1 and not self.block)
                 result += decl.to_string(2, is_last_decl)
         
         # Block section
         if self.block:
-            result += self._get_prefix(1, True) + "Block\n"
-            result += self.block.to_string(2, True)
+            result += " └─ Block"
+            # Add block annotations
+            if self.block.block_index is not None or self.block.scope_level is not None:
+                annotations = []
+                if self.block.block_index is not None:
+                    annotations.append(f"block_index:{self.block.block_index}")
+                if self.block.scope_level is not None:
+                    annotations.append(f"lev:{self.block.scope_level}")
+                result += " -> " + ", ".join(annotations)
+            result += "\n"
+            # Print statements inside the block
+            for i, stmt in enumerate(self.block.statements):
+                is_last_stmt = (i == len(self.block.statements) - 1)
+                result += stmt.to_string(2, is_last_stmt)
         
         return result
 
@@ -95,8 +107,13 @@ class VarDeclASTNode(DecoratedASTNode):
     
     def to_string(self, indent: int = 0, is_last: bool = True) -> str:
         prefix = self._get_prefix(indent, is_last)
-        annotations = f"tab_index:{self.tab_index}, type:{self.var_type.name.lower()}, lev:{self.scope_level}" if self.tab_index else ""
-        ann_str = f" -> {annotations}" if annotations else ""
+        annotations = []
+        if self.tab_index is not None:
+            annotations.append(f"tab_index:{self.tab_index}")
+        annotations.append(f"type:{self.var_type.name.lower()}")
+        if self.scope_level is not None:
+            annotations.append(f"lev:{self.scope_level}")
+        ann_str = " -> " + ", ".join(annotations) if annotations else ""
         return f"{prefix}VarDecl('{self.name}'){ann_str}\n"
 
 class ConstDeclASTNode(DecoratedASTNode):
@@ -135,15 +152,12 @@ class BlockASTNode(DecoratedASTNode):
         self.statements: List[DecoratedASTNode] = []
     
     def to_string(self, indent: int = 0, is_last: bool = True) -> str:
-        annotations = f"block_index:{self.block_index}, lev:{self.scope_level}" if self.block_index is not None else ""
-        ann_str = f" -> {annotations}" if annotations else ""
-        result = f"{self._get_prefix(indent, is_last)}Block{ann_str}\n"
-        
-        # Print statements
+        # Block node biasanya tidak ditampilkan sendiri, tetapi langsung statements-nya
+        # Karena sudah ditampilkan di ProgramNode
+        result = ""
         for i, stmt in enumerate(self.statements):
             is_last_stmt = (i == len(self.statements) - 1)
-            result += stmt.to_string(indent + 1, is_last_stmt)
-        
+            result += stmt.to_string(indent, is_last_stmt)
         return result
 
 class AssignASTNode(DecoratedASTNode):
@@ -156,18 +170,23 @@ class AssignASTNode(DecoratedASTNode):
         """Extract string representation of value node"""
         # For literal values
         if hasattr(node, 'value'):
-            return str(node.value)
+            val = node.value
+            if isinstance(val, str) and node.node_type == "String":
+                return f"'{val}'"
+            return str(val)
         # For identifiers
         elif hasattr(node, 'name') and node.node_type == "Var":
-            return f"'{node.name}'"
-        # For negative numbers
+            return f"{node.name}"
+        # For negative numbers (UnaryOp)
         elif node.node_type == "UnaryOp" and hasattr(node, 'op') and node.op == '-':
             if hasattr(node, 'operand'):
                 val = self._get_value_representation(node.operand)
                 return f"-{val}"
         # For binary operations
-        elif node.node_type == "BinOp":
-            return "..."  # Binary operations are too complex, show as ...
+        elif node.node_type == "BinOp" and hasattr(node, 'op'):
+            left = self._get_value_representation(node.left) if hasattr(node, 'left') else "?"
+            right = self._get_value_representation(node.right) if hasattr(node, 'right') else "?"
+            return f"{left}{node.op}{right}"
         # For array access
         elif node.node_type == "ArrayAccess":
             return "..."
@@ -180,15 +199,53 @@ class AssignASTNode(DecoratedASTNode):
     def to_string(self, indent: int = 0, is_last: bool = True) -> str:
         target_name = self.target.name if hasattr(self.target, 'name') else str(self.target)
         value_repr = self._get_value_representation(self.value)
-        type_str = f"type:{self.data_type.name.lower()}" if self.data_type else ""
-        ann_str = f" -> {type_str}" if type_str else ""
-        result = f"{self._get_prefix(indent, is_last)}Assign('{target_name}' := {value_repr}){ann_str}\n"
         
-        # Show target and value
-        result += self.target.to_string(indent + 1, False)
-        result += self.value.to_string(indent + 1, True)
+        prefix = self._get_prefix(indent, is_last)
+        # Assignment always has type void
+        result = f"{prefix}Assign('{target_name}' := {value_repr}) -> type:void\n"
+        
+        # Show target with annotations
+        target_prefix = self._get_prefix(indent + 1, False)
+        target_annotations = []
+        if self.target.tab_index is not None:
+            target_annotations.append(f"tab_index:{self.target.tab_index}")
+        if self.target.data_type is not None:
+            target_annotations.append(f"type:{self.target.data_type.name.lower()}")
+        target_ann_str = " -> " + ", ".join(target_annotations) if target_annotations else ""
+        result += f"{target_prefix}target '{target_name}'{target_ann_str}\n"
+        
+        # Show value with appropriate formatting
+        result += self._format_value_node(self.value, indent + 1, True)
         
         return result
+    
+    def _format_value_node(self, node: DecoratedASTNode, indent: int, is_last: bool) -> str:
+        """Format value node dengan label 'value' di depan"""
+        prefix = self._get_prefix(indent, is_last)
+        
+        if hasattr(node, 'value'):
+            # Literal value (Number, String, etc)
+            type_str = f"type:{node.data_type.name.lower()}" if node.data_type else ""
+            ann_str = f" -> {type_str}" if type_str else ""
+            return f"{prefix}value {node.value}{ann_str}\n"
+        elif node.node_type == "BinOp":
+            # Binary operation
+            type_str = f"type:{node.data_type.name.lower()}" if node.data_type else ""
+            ann_str = f" -> {type_str}" if type_str else ""
+            result = f"{prefix}value BinOp '{node.op}'{ann_str}\n"
+            result += node.left.to_string(indent + 1, False)
+            result += node.right.to_string(indent + 1, True)
+            return result
+        elif node.node_type == "UnaryOp":
+            # Unary operation
+            type_str = f"type:{node.data_type.name.lower()}" if node.data_type else ""
+            ann_str = f" -> {type_str}" if type_str else ""
+            result = f"{prefix}value UnaryOp '{node.op}'{ann_str}\n"
+            result += node.operand.to_string(indent + 1, True)
+            return result
+        else:
+            # For other nodes, just add 'value' label
+            return prefix + "value " + node.to_string(0, is_last)[len(self._get_prefix(0, is_last)):]
 
 class VarASTNode(DecoratedASTNode):
     def __init__(self, name: str):
@@ -197,8 +254,12 @@ class VarASTNode(DecoratedASTNode):
     
     def to_string(self, indent: int = 0, is_last: bool = True) -> str:
         prefix = self._get_prefix(indent, is_last)
-        annotations = f"tab_index:{self.tab_index}, type:{self.data_type.name.lower()}" if self.tab_index else ""
-        ann_str = f" -> {annotations}" if annotations else ""
+        annotations = []
+        if self.tab_index is not None:
+            annotations.append(f"tab_index:{self.tab_index}")
+        if self.data_type is not None:
+            annotations.append(f"type:{self.data_type.name.lower()}")
+        ann_str = " -> " + ", ".join(annotations) if annotations else ""
         return f"{prefix}'{self.name}'{ann_str}\n"
 
 class NumberASTNode(DecoratedASTNode):
@@ -291,7 +352,14 @@ class ProcCallASTNode(DecoratedASTNode):
     
     def to_string(self, indent: int = 0, is_last: bool = True) -> str:
         prefix = self._get_prefix(indent, is_last)
-        result = f"{prefix}writeln(args: {len(self.args)}) -> predefined\n"
+        arg_count = len(self.args) if self.args else 0
+        
+        # Check if it's a predefined procedure
+        ann_str = " -> predefined"
+        if self.tab_index is not None:
+            ann_str = f" -> tab_index:{self.tab_index}, predefined"
+        
+        result = f"{prefix}{self.name}(args: {arg_count}){ann_str}\n"
         
         # Show arguments if any
         if self.args:
@@ -335,16 +403,19 @@ class IfASTNode(DecoratedASTNode):
         result = f"{prefix}If-Then-Else -> type:void\n"
         
         # Show condition
-        result += self._get_prefix(indent + 1, False) + "condition\n"
+        cond_prefix = self._get_prefix(indent + 1, False)
+        result += f"{cond_prefix}condition\n"
         result += self.condition.to_string(indent + 2, True)
         
         # Show then statement
-        result += self._get_prefix(indent + 1, self.else_stmt is None) + "then\n"
+        then_prefix = self._get_prefix(indent + 1, self.else_stmt is None)
+        result += f"{then_prefix}then\n"
         result += self.then_stmt.to_string(indent + 2, True)
         
         # Show else statement if present
         if self.else_stmt:
-            result += self._get_prefix(indent + 1, True) + "else\n"
+            else_prefix = self._get_prefix(indent + 1, True)
+            result += f"{else_prefix}else\n"
             result += self.else_stmt.to_string(indent + 2, True)
         
         return result
@@ -360,11 +431,13 @@ class WhileASTNode(DecoratedASTNode):
         result = f"{prefix}While-Do -> type:void\n"
         
         # Show condition
-        result += self._get_prefix(indent + 1, False) + "condition\n"
+        cond_prefix = self._get_prefix(indent + 1, False)
+        result += f"{cond_prefix}condition\n"
         result += self.condition.to_string(indent + 2, True)
         
         # Show body
-        result += self._get_prefix(indent + 1, True) + "body\n"
+        body_prefix = self._get_prefix(indent + 1, True)
+        result += f"{body_prefix}body\n"
         result += self.body.to_string(indent + 2, True)
         
         return result
@@ -385,14 +458,17 @@ class ForASTNode(DecoratedASTNode):
         result = f"{prefix}For '{self.var}' {direction} -> type:void\n"
         
         # Show range
-        result += self._get_prefix(indent + 1, False) + "start\n"
+        start_prefix = self._get_prefix(indent + 1, False)
+        result += f"{start_prefix}start\n"
         result += self.start.to_string(indent + 2, True)
         
-        result += self._get_prefix(indent + 1, False) + "end\n"
+        end_prefix = self._get_prefix(indent + 1, False)
+        result += f"{end_prefix}end\n"
         result += self.end.to_string(indent + 2, True)
         
         # Show body
-        result += self._get_prefix(indent + 1, True) + "body\n"
+        body_prefix = self._get_prefix(indent + 1, True)
+        result += f"{body_prefix}body\n"
         result += self.body.to_string(indent + 2, True)
         
         return result
@@ -413,7 +489,8 @@ class RepeatASTNode(DecoratedASTNode):
             result += stmt.to_string(indent + 1, is_last_stmt)
         
         # Show condition
-        result += self._get_prefix(indent + 1, True) + "until\n"
+        until_prefix = self._get_prefix(indent + 1, True)
+        result += f"{until_prefix}until\n"
         result += self.condition.to_string(indent + 2, True)
         
         return result
@@ -429,14 +506,16 @@ class CaseASTNode(DecoratedASTNode):
         result = f"{prefix}Case-Of -> type:void\n"
         
         # Show selector
-        result += self._get_prefix(indent + 1, False) + "selector\n"
+        sel_prefix = self._get_prefix(indent + 1, False)
+        result += f"{sel_prefix}selector\n"
         result += self.selector.to_string(indent + 2, True)
         
         # Show cases
         for i, (labels, stmt) in enumerate(self.cases):
             is_last_case = (i == len(self.cases) - 1)
             label_str = ", ".join(str(l) for l in labels) if isinstance(labels, list) else str(labels)
-            result += self._get_prefix(indent + 1, is_last_case) + f"case {label_str}\n"
+            case_prefix = self._get_prefix(indent + 1, is_last_case)
+            result += f"{case_prefix}case {label_str}\n"
             result += stmt.to_string(indent + 2, True)
         
         return result
