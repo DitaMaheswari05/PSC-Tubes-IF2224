@@ -83,7 +83,7 @@ python run.py -s <path_kode_pascal>
 ```
 **Contoh:**
 ```bash
-python run.py ../test/milestone-3/input/program1.pas
+python run.py -s ../test/milestone-3/input/program11.pas
 ```
 
 ### 3️. Format Output
