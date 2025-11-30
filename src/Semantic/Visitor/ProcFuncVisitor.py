@@ -47,22 +47,8 @@ class ProcFuncVisitor(SemanticAnalyzerBase):
                         arg_ast = expr_visitor.visit_expression(param_child)
                         args.append(arg_ast)
         
-        # cek apakah built-in procedure
-        if self.symbol_table.is_builtin_procedure(proc_name):
-            # built-in procedure: writeln, write, readln, read
-            self._check_builtin_procedure(proc_name, args, line, column)
-            
-            # buat proccallastnode untuk built-in
-            ast_node = ProcCallASTNode(proc_name, args)
-            ast_node.annotate(
-                data_type=DataType.VOID,
-                tab_index=-1,  # -1 menandakan built-in
-                scope_level=0
-            )
-            return ast_node
-        
-        # untuk user-defined procedure: lookup di symbol table
         idx = self.symbol_table.lookup_identifier(proc_name)
+        
         if idx is None:
             raise UndefinedIdentifierError(proc_name, line, column)
         
@@ -78,10 +64,17 @@ class ProcFuncVisitor(SemanticAnalyzerBase):
                 column=column
             )
         
-        # validasi arguments untuk user-defined procedure
-        self._validate_call_arguments(proc_name, idx, args, line, column)
+        # Cek apakah built-in
+        is_builtin = self.symbol_table.is_builtin_procedure(proc_name)
         
-        # buat proccallastnode
+        if is_builtin:
+            # Validasi khusus untuk built-in
+            self._check_builtin_procedure(proc_name, args, line, column)
+        else:
+            # Validasi untuk user-defined
+            self._validate_call_arguments(proc_name, idx, args, line, column)
+        
+        # Buat AST node dengan tab_index yang valid
         ast_node = ProcCallASTNode(proc_name, args)
         ast_node.annotate(
             data_type=DataType.VOID,

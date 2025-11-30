@@ -25,6 +25,9 @@ class SymbolTable:
             "false": (ObjectType.CONSTANT, DataType.BOOLEAN)
         }
         
+        # Set untuk melacak built-in procedures yang sudah dimasukkan ke tab
+        self.registered_builtins: set = set()
+        
         # Inisialisasi reserved words dan prosedur built-in
         self.initialize_reserved()
         
@@ -72,28 +75,24 @@ class SymbolTable:
         # Inisialisasi blok global
         self.btab.append(BTabEntry())
         
-        # Prosedur built-in standar
-        builtin_procs = [
-            ("writeln", ObjectType.PROCEDURE, DataType.VOID),
-            ("write", ObjectType.PROCEDURE, DataType.VOID),
-            ("readln", ObjectType.PROCEDURE, DataType.VOID),
-            ("read", ObjectType.PROCEDURE, DataType.VOID),
-        ]
+        # # Prosedur built-in standar
+        # builtin_procs = [
+        #     ("writeln", ObjectType.PROCEDURE, DataType.VOID),
+        #     # ("write", ObjectType.PROCEDURE, DataType.VOID),
+        #     # ("readln", ObjectType.PROCEDURE, DataType.VOID),
+        #     # ("read", ObjectType.PROCEDURE, DataType.VOID),
+        # ]
         
-        for identifier, obj, data_type in builtin_procs:
-            # link menunjuk entry sebelumnya dalam blok yang sama
-            link = self.btab[0].last
-            entry = TabEntry(identifier, obj, data_type, ref=0, nrm=1, lev=0, adr=0, link=link)
-            self.tab.append(entry)
-            self.btab[0].last = len(self.tab) - 1
+        # for identifier, obj, data_type in builtin_procs:
+        #     # link=0 karena built-in tidak masuk linked list btab
+        #     entry = TabEntry(identifier, obj, data_type, ref=0, nrm=1, lev=0, adr=0, link=0)
+        #     self.tab.append(entry)
     
     def enter_program(self, program_name: str) -> int:
-        # Masukkan nama program ke symbol table (global scope)
-        link = self.btab[0].last
+        # Program name tidak masuk linked list
         entry = TabEntry(program_name, ObjectType.PROGRAM, DataType.VOID, 
-                        ref=0, nrm=1, lev=0, adr=0, link=link)
+                        ref=0, nrm=1, lev=0, adr=0, link=0)
         self.tab.append(entry)
-        self.btab[0].last = len(self.tab) - 1
         return len(self.tab) - 1
     
     def enter_block(self):
@@ -115,25 +114,51 @@ class SymbolTable:
         current_block_index = self.display[self.level]
         current_block = self.btab[current_block_index]
         
-        # link mengacu ke identifier terakhir pada blok ini
-        link = current_block.last
-        
-        entry = TabEntry(identifier, obj, data_type, ref, nrm, self.level, adr, link)
+        # Entry baru dimulai dengan link=0 (tidak ada next)
+        entry = TabEntry(identifier, obj, data_type, ref, nrm, self.level, adr, link=0)
         self.tab.append(entry)
-        current_block.last = len(self.tab) - 1
+        new_idx = len(self.tab) - 1
+        
+        # Update entry sebelumnya (last) agar menunjuk ke entry baru ini
+        if current_block.last != 0:
+            # Pastikan kita tidak meng-update program name
+            last_entry = self.tab[current_block.last]
+            # Hanya update jika entry terakhir bukan program
+            if last_entry.obj != ObjectType.PROGRAM:
+                last_entry.link = new_idx
+        
+        # Update last ke entry baru
+        current_block.last = new_idx
         
         # Jika variabel biasa, ukuran variabel bertambah
         if obj == ObjectType.VARIABLE:
             current_block.vsze += 1
         
+        return new_idx
+    
+    def enter_builtin_procedure(self, name: str) -> int:
+        # Cek apakah sudah pernah dimasukkan
+        if name.lower() in self.registered_builtins:
+            # Cari indeks-nya di TAB
+            for idx in range(29, len(self.tab)):
+                if self.tab[idx].id.lower() == name.lower():
+                    return idx
+        
+        # Masukkan ke tab dengan link=0 (tidak masuk linked list)
+        entry = TabEntry(name, ObjectType.PROCEDURE, DataType.VOID, 
+                        ref=0, nrm=1, lev=0, adr=0, link=0)
+        self.tab.append(entry)
+        
+        # Tandai sudah diregistrasi
+        self.registered_builtins.add(name.lower())
+        
         return len(self.tab) - 1
     
+    
     def lookup_identifier(self, identifier: str) -> Optional[int]:
-        # Mencari identifier di scope saat ini hingga scope parent
         if identifier.lower() in self.builtin_types:
-            return -1 # Jika tipe built-in, return -1
+            return -1
         
-        # Jika konstanta built-in, return -2
         if identifier.lower() in self.builtin_constants:
             return -2
         
@@ -142,16 +167,39 @@ class SymbolTable:
             block_index = self.display[level]
             block = self.btab[block_index]
             
-            # Traverse linked list pada blok
-            current_index = block.last
-            while current_index != 0:
-                entry = self.tab[current_index]
+            # Cari entry pertama dengan level ini (yang tidak ada yang menunjuk ke dia)
+            first_idx = None
+            
+            # Cara 1: Scan untuk cari yang tidak di-refer
+            referred = set()
+            for idx in range(29, len(self.tab)):
+                entry = self.tab[idx]
+                if entry.lev == level and entry.link != 0:
+                    referred.add(entry.link)
+            
+            # Cari entry dengan level ini yang tidak di-refer
+            for idx in range(29, len(self.tab)):
+                entry = self.tab[idx]
+                # Skip program name dalam pencarian
+                if entry.obj == ObjectType.PROGRAM:
+                    continue
+                if entry.lev == level and idx not in referred:
+                    first_idx = idx
+                    break
+            
+            # Traverse forward dari first_idx
+            current_idx = first_idx
+            while current_idx is not None and current_idx != 0:
+                entry = self.tab[current_idx]
                 if entry.id.lower() == identifier.lower():
-                    return current_index
-                current_index = entry.link
+                    return current_idx
+                current_idx = entry.link if entry.link != 0 else None
+        
+        if self.is_builtin_procedure(identifier):
+            return self.enter_builtin_procedure(identifier)
         
         return None
-    
+
     def is_builtin_type(self, identifier: str) -> bool:
         # Mengecek apakah keyword merupakan tipe built-in
         return identifier.lower() in self.builtin_types
@@ -167,13 +215,12 @@ class SymbolTable:
     
     def is_builtin_procedure(self, identifier: str) -> bool:
         # Mengecek apakah prosedur built-in
-        builtin_names = ['writeln', 'write', 'readln', 'read']
+        builtin_names = ['writeln']
         return identifier.lower() in builtin_names
     
     def get_builtin_procedure_type(self, identifier: str) -> Optional[DataType]:
         # Prosedur built-in selalu bertipe VOID
-        name = identifier.lower()
-        if name in ['writeln', 'write', 'readln', 'read']:
+        if self.is_builtin_procedure(identifier):
             return DataType.VOID
         return None
     
