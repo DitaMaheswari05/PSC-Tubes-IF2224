@@ -110,22 +110,22 @@ class SymbolTable:
             self.display.pop()
     
     def enter_identifier(self, identifier: str, obj: ObjectType, data_type: DataType, ref: int = 0, nrm: int = 1, adr: int = 0) -> int:
-        # Memasukkan identifier (var, func, proc, dll) ke blok saat ini
         current_block_index = self.display[self.level]
         current_block = self.btab[current_block_index]
         
-        # Entry baru dimulai dengan link=0 (tidak ada next)
-        entry = TabEntry(identifier, obj, data_type, ref, nrm, self.level, adr, link=0)
+        # Link ke entry sebelumnya dalam scope yang sama
+        # Jika ini entry pertama dalam scope, link=0
+        # Jika sudah ada entry sebelumnya, link ke entry terakhir yang valid (bukan program)
+        link_to_previous = 0
+        if current_block.last != 0:
+            last_entry = self.tab[current_block.last]
+            # Hanya link jika entry terakhir bukan program
+            if last_entry.obj != ObjectType.PROGRAM:
+                link_to_previous = current_block.last
+        
+        entry = TabEntry(identifier, obj, data_type, ref, nrm, self.level, adr, link=link_to_previous)
         self.tab.append(entry)
         new_idx = len(self.tab) - 1
-        
-        # Update entry sebelumnya (last) agar menunjuk ke entry baru ini
-        if current_block.last != 0:
-            # Pastikan kita tidak meng-update program name
-            last_entry = self.tab[current_block.last]
-            # Hanya update jika entry terakhir bukan program
-            if last_entry.obj != ObjectType.PROGRAM:
-                last_entry.link = new_idx
         
         # Update last ke entry baru
         current_block.last = new_idx
@@ -156,48 +156,37 @@ class SymbolTable:
     
     
     def lookup_identifier(self, identifier: str) -> Optional[int]:
+        # Cek apakah identifier adalah tipe built-in (integer, real, boolean, dll)
         if identifier.lower() in self.builtin_types:
             return -1
         
+        # Cek apakah identifier adalah konstanta built-in (true, false)
         if identifier.lower() in self.builtin_constants:
             return -2
         
-        # Cari dari level aktif hingga level global
+        # Cari identifier dari level saat ini hingga level global (0)
         for level in range(self.level, -1, -1):
             block_index = self.display[level]
             block = self.btab[block_index]
             
-            # Cari entry pertama dengan level ini (yang tidak ada yang menunjuk ke dia)
-            first_idx = None
-            
-            # Cara 1: Scan untuk cari yang tidak di-refer
-            referred = set()
-            for idx in range(29, len(self.tab)):
-                entry = self.tab[idx]
-                if entry.lev == level and entry.link != 0:
-                    referred.add(entry.link)
-            
-            # Cari entry dengan level ini yang tidak di-refer
-            for idx in range(29, len(self.tab)):
-                entry = self.tab[idx]
-                # Skip program name dalam pencarian
-                if entry.obj == ObjectType.PROGRAM:
-                    continue
-                if entry.lev == level and idx not in referred:
-                    first_idx = idx
-                    break
-            
-            # Traverse forward dari first_idx
-            current_idx = first_idx
+            # Mulai dari entry terakhir di blok (backward linked list)
+            current_idx = block.last
             while current_idx is not None and current_idx != 0:
                 entry = self.tab[current_idx]
+                # Skip jika ketemu program name
+                if entry.obj == ObjectType.PROGRAM:
+                    break
+                # Bandingkan nama identifier (case-insensitive)
                 if entry.id.lower() == identifier.lower():
                     return current_idx
+                # Ikuti link ke entry sebelumnya
                 current_idx = entry.link if entry.link != 0 else None
         
+        # Jika tidak ditemukan, cek apakah prosedur built-in (writeln, dll)
         if self.is_builtin_procedure(identifier):
             return self.enter_builtin_procedure(identifier)
         
+        # Identifier tidak ditemukan
         return None
 
     def is_builtin_type(self, identifier: str) -> bool:
@@ -251,8 +240,12 @@ class SymbolTable:
                 type_str = str(entry.type.value) if hasattr(entry.type, 'value') else str(entry.type)
                 obj_str = entry.obj.value if hasattr(entry.obj, 'value') else str(entry.obj)
                 
+                identifier_display = entry.id[:20]
+                if entry.obj == ObjectType.PROCEDURE and entry.lev == 0 and self.is_builtin_procedure(entry.id):
+                    identifier_display = f"{entry.id[:12]} (predefined)"
+                
                 print("|{:>4} | {:20} | {:10} | {:7} | {:3} | {:3} | {:3} | {:3} | {:3} |".format(
-                    idx, entry.id[:20], obj_str[:10], type_str[:7], 
+                    idx, identifier_display, obj_str[:10], type_str[:7], 
                     entry.ref, entry.nrm, entry.lev, entry.adr, entry.link))
         
         if not has_identifiers:
