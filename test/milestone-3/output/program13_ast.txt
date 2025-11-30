@@ -1,0 +1,13 @@
+=== Decorated AST ===
+ProgramNode(name: 'TestFungsiRekursif')
+ ├─ Declarations
+│    ├─ VarDecl('hasil') -> tab_index:30, type:integer, lev:0
+│    ├─ FunctionDecl -> 'faktorial', type:integer, tab_index:31, block_index:1, lev:1
+ └─ Block -> block_index:0, lev:0
+│    ├─ Assign('hasil' := ...) -> type:void
+│    │    ├─ target 'hasil' -> tab_index:30, type:integer
+│    │    └─ value faktorial(args: 1) -> type:integer
+└─ 5 -> type:integer
+│    └─ writeln(args: 2) -> tab_index:33, predefined
+│    │    ├─ "'Faktorial 5 = '" -> type:string
+│    │    └─ 'hasil' -> tab_index:30, type:integer

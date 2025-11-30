@@ -5,7 +5,7 @@ ProgramNode(name: 'yangpentingdesimaldah')
 │    ├─ VarDecl('iniScientific') -> tab_index:31, type:real, lev:0
 │    ├─ VarDecl('samaNeg') -> tab_index:32, type:real, lev:0
 │    ├─ VarDecl('biasa') -> tab_index:33, type:real, lev:0
- └─ Block -> block_index:1, lev:1
+ └─ Block -> block_index:0, lev:0
 │    ├─ Assign('iniDesimal' := 0.1213123) -> type:void
 │    │    ├─ target 'iniDesimal' -> tab_index:30, type:real
 │    │    └─ value 0.1213123 -> type:real

@@ -1,0 +1,26 @@
+=== Decorated AST ===
+ProgramNode(name: 'TestTipeData')
+ ├─ Declarations
+│    ├─ VarDecl('angka') -> tab_index:30, type:integer, lev:0
+│    ├─ VarDecl('pecahan') -> tab_index:31, type:real, lev:0
+│    ├─ VarDecl('hasil') -> tab_index:32, type:real, lev:0
+ └─ Block -> block_index:0, lev:0
+│    ├─ Assign('angka' := 5) -> type:void
+│    │    ├─ target 'angka' -> tab_index:30, type:integer
+│    │    └─ value 5 -> type:integer
+│    ├─ Assign('pecahan' := 2.5) -> type:void
+│    │    ├─ target 'pecahan' -> tab_index:31, type:real
+│    │    └─ value 2.5 -> type:real
+│    ├─ Assign('hasil' := angka) -> type:void
+│    │    ├─ target 'hasil' -> tab_index:32, type:real
+│    │    └─ value 'angka' -> tab_index:30, type:integer
+│    ├─ Assign('hasil' := angka+pecahan) -> type:void
+│    │    ├─ target 'hasil' -> tab_index:32, type:real
+│    │    └─ value BinOp '+' -> type:real
+│    │    │    ├─ 'angka' -> tab_index:30, type:integer
+│    │    │    └─ 'pecahan' -> tab_index:31, type:real
+│    └─ writeln(args: 2) -> tab_index:33, predefined
+│    │    ├─ "'Hasil = '" -> type:string
+│    │    └─ 'hasil' -> tab_index:32, type:real
+
+

@@ -3,7 +3,7 @@ ProgramNode(name: 'larikprogram')
  ├─ Declarations
 │    ├─ VarDecl('i') -> tab_index:30, type:integer, lev:0
 │    ├─ VarDecl('arr') -> tab_index:31, type:array, lev:0
- └─ Block -> block_index:1, lev:1
+ └─ Block -> block_index:0, lev:0
 │    ├─ For 'i' to -> type:void
 │    │    ├─ start
 │    │    │    └─ 1 -> type:integer

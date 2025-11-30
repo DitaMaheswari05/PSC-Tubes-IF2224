@@ -5,7 +5,7 @@ ProgramNode(name: 'logika')
 │    ├─ VarDecl('b') -> tab_index:31, type:integer, lev:0
 │    ├─ VarDecl('c') -> tab_index:32, type:integer, lev:0
 │    ├─ VarDecl('ok') -> tab_index:33, type:boolean, lev:0
- └─ Block -> block_index:1, lev:1
+ └─ Block -> block_index:0, lev:0
 │    ├─ Assign('a' := 10) -> type:void
 │    │    ├─ target 'a' -> tab_index:30, type:integer
 │    │    └─ value 10 -> type:integer

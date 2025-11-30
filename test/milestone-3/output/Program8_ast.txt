@@ -3,7 +3,7 @@ ProgramNode(name: 'TestIf')
  ├─ Declarations
 │    ├─ VarDecl('x') -> tab_index:30, type:integer, lev:0
 │    ├─ VarDecl('y') -> tab_index:31, type:integer, lev:0
- └─ Block -> block_index:1, lev:1
+ └─ Block -> block_index:0, lev:0
 │    ├─ Assign('x' := 10) -> type:void
 │    │    ├─ target 'x' -> tab_index:30, type:integer
 │    │    └─ value 10 -> type:integer

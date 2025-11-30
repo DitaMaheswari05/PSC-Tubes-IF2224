@@ -3,7 +3,7 @@ ProgramNode(name: 'TestProcedure')
  ├─ Declarations
 │    ├─ VarDecl('x') -> tab_index:30, type:integer, lev:0
 │    ├─ ProcedureDecl -> 'printNumber', type:void, tab_index:31, block_index:1, lev:1
- └─ Block -> block_index:2, lev:1
+ └─ Block -> block_index:0, lev:0
 │    ├─ Assign('x' := 42) -> type:void
 │    │    ├─ target 'x' -> tab_index:30, type:integer
 │    │    └─ value 42 -> type:integer
